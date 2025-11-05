@@ -33,6 +33,12 @@ class Monster:
         self.spells = monster_data.get('zaklecia', [])
         self.is_boss = monster_data.get('boss', False)
 
+        # AI enhancements
+        self.inventory = monster_data.get('inventory', [])  # Lista przedmiotów (głównie mikstury)
+        self.ai_tactic = 'balanced'  # aggressive, balanced, defensive
+        self.enraged = False  # Czy boss jest w fazie rage (HP < 50%)
+        self.used_healing = False  # Czy już użył mikstury (raz na walkę)
+
     def get_modifier(self, attribute):
         """Zwraca modyfikator dla atrybutu."""
         return calculate_modifier(self.attributes[attribute])
@@ -78,6 +84,51 @@ class Monster:
         damage_roll = self.attack_data.get('obrazenia', '1d6')
 
         return attack_roll, attack_bonus, damage_roll
+
+    def get_hp_percentage(self):
+        """Zwraca procent aktualnego HP."""
+        return (self.hp / self.max_hp) * 100
+
+    def use_healing_potion(self):
+        """
+        Używa mikstury leczenia jeśli ma w inventory.
+
+        Returns:
+            Tuple (success, heal_amount)
+        """
+        # Szukaj mikstury leczenia w inventory
+        for item_id in self.inventory[:]:  # Kopia listy aby bezpiecznie usuwać
+            if 'mikstura' in item_id and 'leczenia' in item_id:
+                # Usuń z inventory
+                self.inventory.remove(item_id)
+
+                # Leczenie (4d4+4 jak standardowa mikstura)
+                from utils.dice import roll
+                heal = roll('4d4+4')
+                self.hp = min(self.max_hp, self.hp + heal)
+
+                self.used_healing = True
+                return True, heal
+
+        return False, 0
+
+    def trigger_enrage(self):
+        """Aktywuje fazę rage dla bossa."""
+        if self.is_boss and not self.enraged:
+            self.enraged = True
+            # Buff statystyk
+            self.attack_data['bonus'] += 3
+            self.attack_data['obrazenia'] = self.attack_data.get('obrazenia', '1d6')
+            # Zwiększ dmg (dodaj +d6)
+            current_dmg = self.attack_data['obrazenia']
+            if '+' in current_dmg:
+                base, bonus = current_dmg.split('+')
+                bonus_val = int(bonus) + 6
+                self.attack_data['obrazenia'] = f"{base}+{bonus_val}"
+            else:
+                self.attack_data['obrazenia'] = f"{current_dmg}+6"
+            return True
+        return False
 
 
 class CombatSystem:
@@ -441,6 +492,12 @@ class CombatSystem:
                 else:
                     print(colored_text(f"  💥 Mnożnik: {original_damage} → {damage} obrażeń!", 'red'))
 
+            # Sprawdź vulnerable effect na potworze (+50% dmg)
+            if self.monster_effects['vulnerable'] > 0:
+                original_damage = damage
+                damage = int(damage * 1.5)
+                print(colored_text(f"  💀 {self.monster.name} jest podatny: {original_damage} → {damage} obrażeń!", 'red'))
+
             print(f"⚔ Zadajesz {damage} obrażeń!")
             self.monster.take_damage(damage)
 
@@ -488,6 +545,12 @@ class CombatSystem:
                     print(colored_text(f"  ⚠️ Postawa obronna: {original_damage} → {damage} obrażeń", 'blue'))
                 else:
                     print(colored_text(f"  💥 Mnożnik: {original_damage} → {damage} obrażeń!", 'red'))
+
+            # Sprawdź vulnerable effect na potworze (+50% dmg)
+            if self.monster_effects['vulnerable'] > 0:
+                original_damage = damage
+                damage = int(damage * 1.5)
+                print(colored_text(f"  💀 {self.monster.name} jest podatny: {original_damage} → {damage} obrażeń!", 'red'))
 
             print(f"✓ Trafiasz! Zadajesz {damage} obrażeń!")
             self.monster.take_damage(damage)
@@ -871,6 +934,43 @@ class CombatSystem:
             self.monster_effects['vulnerable'] = max(self.monster_effects['vulnerable'], 1)
             return
 
+        # ===== AI DECISION MAKING =====
+        hp_percent = self.monster.get_hp_percentage()
+
+        # 1. BOSS ENRAGE - gdy HP < 50%
+        if self.monster.is_boss and hp_percent < 50 and not self.monster.enraged:
+            if self.monster.trigger_enrage():
+                print_separator("!")
+                print(colored_text(f"💢 {self.monster.name} WPADA W SZAŁ!", 'red'))
+                print(colored_text(f"   Oczy płoną gniewem! Ataki są silniejsze!", 'red'))
+                print_separator("!")
+                press_enter()
+                # Po enrage nadal atakuje w tej turze
+
+        # 2. UŻYCIE MIKSTURY - gdy HP < 30% i ma miksturę (tylko raz)
+        if hp_percent < 30 and not self.monster.used_healing and len(self.monster.inventory) > 0:
+            success, heal = self.monster.use_healing_potion()
+            if success:
+                print(colored_text(f"🧪 {self.monster.name} używa Mikstury Leczenia!", 'green'))
+                print(colored_text(f"   +{heal} HP! (Aktualne HP: {self.monster.hp}/{self.monster.max_hp})", 'green'))
+                return  # Koniec tury - zużył akcję na miksturę
+
+        # 3. ZMIANA TAKTYKI w zależności od HP
+        if hp_percent > 70:
+            self.monster.ai_tactic = 'aggressive'
+        elif hp_percent > 30:
+            self.monster.ai_tactic = 'balanced'
+        else:
+            self.monster.ai_tactic = 'defensive'
+
+        # Wyświetl taktykę (tylko dla bossów, dla klimatu)
+        if self.monster.is_boss and random.random() < 0.2:  # 20% szansy
+            if self.monster.ai_tactic == 'aggressive':
+                print(colored_text(f"💥 {self.monster.name} atakuje agresywnie!", 'red'))
+            elif self.monster.ai_tactic == 'defensive':
+                print(colored_text(f"🛡️ {self.monster.name} przyjmuje postawę obronną!", 'blue'))
+
+        # ===== ATAK =====
         # Potwór atakuje
         attack_roll, attack_bonus, damage_roll = self.monster.attack()
 
@@ -916,6 +1016,12 @@ class CombatSystem:
             print(colored_text("💥 KRYTYCZNE TRAFIENIE WROGA!", 'red'))
             damage = roll(damage_roll) * 2
 
+            # Sprawdź efekt osłabienia
+            if self.monster_effects['weakened'] > 0:
+                original_damage = damage
+                damage = max(1, damage // 2)  # -50% dmg, minimum 1
+                print(colored_text(f"   ⚠️ {self.monster.name} jest osłabiony: {original_damage} → {damage} dmg", 'yellow'))
+
             # Sprawdź tarczę
             damage = self.apply_shield_absorption(damage)
 
@@ -935,6 +1041,12 @@ class CombatSystem:
         # Sprawdź trafienie
         if total_attack >= player_ac:
             damage = roll(damage_roll)
+
+            # Sprawdź efekt osłabienia
+            if self.monster_effects['weakened'] > 0:
+                original_damage = damage
+                damage = max(1, damage // 2)  # -50% dmg, minimum 1
+                print(colored_text(f"   ⚠️ {self.monster.name} jest osłabiony: {original_damage} → {damage} dmg", 'yellow'))
 
             # Sprawdź tarczę
             damage = self.apply_shield_absorption(damage)
