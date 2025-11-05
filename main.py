@@ -217,6 +217,7 @@ class Game:
             options = [
                 "Eksploruj lokację",
                 "Dziennik questów",
+                "Talenty",
                 "Zobacz ekwipunek",
                 "Odpoczynek",
                 "Zapisz grę",
@@ -233,13 +234,15 @@ class Game:
                     return
             elif choice == 1:  # Dziennik questów
                 self.world.show_all_quests(self.player)
-            elif choice == 2:  # Zobacz ekwipunek
+            elif choice == 2:  # Talenty
+                self.world.show_talent_tree(self.player)
+            elif choice == 3:  # Zobacz ekwipunek
                 self.world.show_inventory(self.player)
-            elif choice == 3:  # Odpoczynek
+            elif choice == 4:  # Odpoczynek
                 self.world.rest(self.player)
-            elif choice == 4:  # Zapisz grę
+            elif choice == 5:  # Zapisz grę
                 self.save_game()
-            elif choice == 5:  # Menu główne
+            elif choice == 6:  # Menu główne
                 if self.confirm_quit():
                     return
 
