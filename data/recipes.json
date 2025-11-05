@@ -1,0 +1,315 @@
+{
+  "weapon_upgrades": {
+    "miecz_plus_1": {
+      "nazwa": "Ulepsz Miecz do +1",
+      "opis": "Wzmacnia broń białą, zwiększając jej obrażenia i bonus do trafienia.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "bron",
+      "wymagana_bron": ["miecz_dlugi", "miecz_krotki", "topor"],
+      "poziom_upgrade": 1,
+      "materialy": {
+        "stal": 5,
+        "kamien_ostrzacy": 3,
+        "kamien_szlif": 1
+      },
+      "koszt_zlota": 100,
+      "efekt": {
+        "bonus_obrazen": "+1",
+        "bonus_ataku": 1,
+        "suffix": "+1"
+      }
+    },
+    "miecz_plus_2": {
+      "nazwa": "Ulepsz Miecz do +2",
+      "opis": "Dalsze wzmocnienie broni białej. Wymaga broni +1.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "bron",
+      "wymagany_poziom_upgrade": 1,
+      "poziom_upgrade": 2,
+      "materialy": {
+        "starozytny_metal": 3,
+        "kamien_ostrzacy": 5,
+        "kamien_szlif": 2,
+        "magiczna_runa": 1
+      },
+      "koszt_zlota": 300,
+      "efekt": {
+        "bonus_obrazen": "+2",
+        "bonus_ataku": 2,
+        "suffix": "+2"
+      }
+    },
+    "miecz_plus_3": {
+      "nazwa": "Ulepsz Miecz do +3",
+      "opis": "Maksymalne wzmocnienie broni. Wymaga broni +2.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "bron",
+      "wymagany_poziom_upgrade": 2,
+      "poziom_upgrade": 3,
+      "materialy": {
+        "mithryl": 2,
+        "smocza_luska": 1,
+        "kamien_duszy": 1,
+        "magiczna_runa": 2
+      },
+      "koszt_zlota": 1000,
+      "efekt": {
+        "bonus_obrazen": "+3",
+        "bonus_ataku": 3,
+        "suffix": "+3"
+      }
+    }
+  },
+  "armor_upgrades": {
+    "zbroja_plus_1": {
+      "nazwa": "Ulepsz Zbroję do +1",
+      "opis": "Wzmacnia zbroję, zwiększając ochronę.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "zbroja",
+      "poziom_upgrade": 1,
+      "materialy": {
+        "stal": 8,
+        "skora": 5,
+        "kamien_szlif": 1
+      },
+      "koszt_zlota": 120,
+      "efekt": {
+        "bonus_klasy_pancerza": 1,
+        "suffix": "+1"
+      }
+    },
+    "zbroja_plus_2": {
+      "nazwa": "Ulepsz Zbroję do +2",
+      "opis": "Dalsze wzmocnienie zbroi. Wymaga zbroi +1.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "zbroja",
+      "wymagany_poziom_upgrade": 1,
+      "poziom_upgrade": 2,
+      "materialy": {
+        "starozytny_metal": 5,
+        "skora": 10,
+        "kamien_szlif": 2,
+        "magiczna_runa": 1
+      },
+      "koszt_zlota": 350,
+      "efekt": {
+        "bonus_klasy_pancerza": 2,
+        "suffix": "+2"
+      }
+    },
+    "zbroja_plus_3": {
+      "nazwa": "Ulepsz Zbroję do +3",
+      "opis": "Maksymalne wzmocnienie zbroi. Wymaga zbroi +2.",
+      "kategoria": "upgrade",
+      "wymagany_typ_bazowy": "zbroja",
+      "wymagany_poziom_upgrade": 2,
+      "poziom_upgrade": 3,
+      "materialy": {
+        "mithryl": 3,
+        "smocza_luska": 2,
+        "kamien_duszy": 1,
+        "magiczna_runa": 2
+      },
+      "koszt_zlota": 1200,
+      "efekt": {
+        "bonus_klasy_pancerza": 3,
+        "suffix": "+3"
+      }
+    }
+  },
+  "potions": {
+    "mikstura_leczenia_mala": {
+      "nazwa": "Stwórz Małą Miksturę Leczenia",
+      "opis": "Tworzy małą miksturę przywracającą 4d4+4 HP.",
+      "kategoria": "craft",
+      "materialy": {
+        "ziola_leczace": 3,
+        "woda": 1
+      },
+      "koszt_zlota": 20,
+      "wynik": {
+        "id": "mikstura_leczenia",
+        "ilosc": 1
+      }
+    },
+    "mikstura_leczenia_duza": {
+      "nazwa": "Stwórz Dużą Miksturę Leczenia",
+      "opis": "Tworzy dużą miksturę przywracającą 8d4+8 HP.",
+      "kategoria": "craft",
+      "materialy": {
+        "ziola_leczace": 6,
+        "srebrny_lisc": 1,
+        "krysztaly_many": 1
+      },
+      "koszt_zlota": 80,
+      "wynik": {
+        "id": "mikstura_leczenia_duza",
+        "nazwa": "Duża Mikstura Leczenia",
+        "typ": "mikstura",
+        "efekt": "leczenie",
+        "moc": "8d4+8",
+        "opis": "Przywraca 8d4+8 punktów zdrowia.",
+        "wartosc": 150,
+        "ilosc": 1
+      }
+    },
+    "mikstura_many": {
+      "nazwa": "Stwórz Miksturę Many",
+      "opis": "Tworzy miksturę przywracającą 3d4+3 many.",
+      "kategoria": "craft",
+      "materialy": {
+        "grzyby_many": 4,
+        "krysztaly_many": 2
+      },
+      "koszt_zlota": 50,
+      "wynik": {
+        "id": "mikstura_many",
+        "ilosc": 1
+      }
+    },
+    "eliksir_sily": {
+      "nazwa": "Stwórz Eliksir Siły",
+      "opis": "Tworzy eliksir tymczasowo zwiększający siłę o +4 na 10 minut.",
+      "kategoria": "craft",
+      "materialy": {
+        "kly": 3,
+        "krew_demona": 1,
+        "ziola_leczace": 2
+      },
+      "koszt_zlota": 200,
+      "wynik": {
+        "id": "eliksir_sily",
+        "nazwa": "Eliksir Siły",
+        "typ": "eliksir",
+        "efekt": "buff_sila",
+        "bonus": 4,
+        "czas_trwania": "10 minut",
+        "opis": "Tymczasowo zwiększa siłę o +4.",
+        "wartosc": 300,
+        "ilosc": 1
+      }
+    },
+    "trucizna": {
+      "nazwa": "Stwórz Truciznę",
+      "opis": "Tworzy truciznę do nałożenia na broń (3 użycia).",
+      "kategoria": "craft",
+      "materialy": {
+        "trujaca_roza": 5,
+        "ciemna_esencja": 2,
+        "kly": 1
+      },
+      "koszt_zlota": 100,
+      "wynik": {
+        "id": "trucizna",
+        "nazwa": "Fiolka Trucizny",
+        "typ": "consumable",
+        "efekt": "weapon_poison",
+        "uzycia": 3,
+        "opis": "Nakłada truciznę na broń. 3 następne ataki zadają dodatkowe 2d6 obrażeń trucizną.",
+        "wartosc": 180,
+        "ilosc": 1
+      }
+    }
+  },
+  "enchantments": {
+    "enchant_ogien": {
+      "nazwa": "Zaklęcie: Płonąca Broń",
+      "opis": "Dodaje element ognia do broni (+1d6 obrażeń ogniem).",
+      "kategoria": "enchant",
+      "wymagany_typ_bazowy": "bron",
+      "materialy": {
+        "esencja_zywiolu": 2,
+        "krysztaly_many": 5,
+        "magiczna_runa": 2
+      },
+      "koszt_zlota": 500,
+      "efekt": {
+        "enchant": "ogien",
+        "bonus_obrazen_element": "1d6 ogień",
+        "prefix": "Płonący"
+      }
+    },
+    "enchant_lod": {
+      "nazwa": "Zaklęcie: Lodowa Broń",
+      "opis": "Dodaje element lodu do broni (+1d6 obrażeń lodem, szansa na spowolnienie).",
+      "kategoria": "enchant",
+      "wymagany_typ_bazowy": "bron",
+      "materialy": {
+        "esencja_zywiolu": 2,
+        "krysztaly_many": 5,
+        "magiczna_runa": 2
+      },
+      "koszt_zlota": 500,
+      "efekt": {
+        "enchant": "lod",
+        "bonus_obrazen_element": "1d6 lód",
+        "efekt_specjalny": "20% szansa na spowolnienie",
+        "prefix": "Lodowy"
+      }
+    },
+    "enchant_wampiryzm": {
+      "nazwa": "Zaklęcie: Wampiryczna Broń",
+      "opis": "Broń kradnie życie (15% obrażeń wraca jako HP).",
+      "kategoria": "enchant",
+      "wymagany_typ_bazowy": "bron",
+      "materialy": {
+        "krew_demona": 3,
+        "kamien_duszy": 1,
+        "ciemna_esencja": 5,
+        "magiczna_runa": 3
+      },
+      "koszt_zlota": 800,
+      "efekt": {
+        "enchant": "wampiryzm",
+        "lifesteal": 0.15,
+        "prefix": "Wampiryczny"
+      }
+    },
+    "enchant_ochrona": {
+      "nazwa": "Zaklęcie: Ochronna Zbroja",
+      "opis": "Dodaje magiczną ochronę do zbroi (+2 AC przeciw magii).",
+      "kategoria": "enchant",
+      "wymagany_typ_bazowy": "zbroja",
+      "materialy": {
+        "krysztaly_many": 8,
+        "magiczna_runa": 3,
+        "srebrny_lisc": 2
+      },
+      "koszt_zlota": 600,
+      "efekt": {
+        "enchant": "ochrona_magiczna",
+        "bonus_ac_vs_magic": 2,
+        "prefix": "Chroniący"
+      }
+    }
+  },
+  "special_items": {
+    "mithrylowy_miecz": {
+      "nazwa": "Wykuj Mithrylowy Miecz",
+      "opis": "Tworzy potężny miecz z mithrylu.",
+      "kategoria": "craft",
+      "materialy": {
+        "mithryl": 5,
+        "kamien_duszy": 1,
+        "magiczna_runa": 3,
+        "kamien_szlif": 5
+      },
+      "koszt_zlota": 2000,
+      "wymagany_poziom": 10,
+      "wynik": {
+        "id": "mithrylowy_miecz",
+        "nazwa": "Mithrylowy Miecz",
+        "typ": "bron",
+        "podtyp": "miecz",
+        "obrazenia": "2d6+2",
+        "bonus_ataku": 3,
+        "klasa_pancerza": 12,
+        "atrybut": "sila",
+        "rzadkosc": "legendary",
+        "opis": "Lekki i śmiertelnie ostry miecz wykuty z legendarnego mithrylu elfów.",
+        "wartosc": 5000,
+        "ilosc": 1
+      }
+    }
+  }
+}
