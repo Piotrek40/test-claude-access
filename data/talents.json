@@ -1,0 +1,856 @@
+{
+  "wojownik": {
+    "berserker": {
+      "nazwa": "Berserker",
+      "opis": "Ścieżka dzikiego wojownika polegającego na czystej sile i agresji",
+      "talenty": {
+        "berserker_1": {
+          "nazwa": "Wściekłość",
+          "opis": "Twoja siła rośnie w ferworze walki. +10% do obrażeń.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "damage_bonus",
+            "wartosc": 0.1
+          }
+        },
+        "berserker_2": {
+          "nazwa": "Regeneracja Bojowa",
+          "opis": "Twoje ciało samo się leczy w trakcie walki. Odzyskujesz 3 HP na początku każdej tury.",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "berserker_1",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "combat_regen",
+            "wartosc": 3
+          }
+        },
+        "berserker_3": {
+          "nazwa": "Krwawa Żądza",
+          "opis": "Zwiększasz swoją szansę na trafienie krytyczne o 5%.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "berserker_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "crit_chance",
+            "wartosc": 5
+          }
+        },
+        "berserker_4": {
+          "nazwa": "Podwójne Uderzenie",
+          "opis": "25% szansy na wykonanie dodatkowego ataku po trafieniu wroga.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "berserker_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "extra_attack_chance",
+            "wartosc": 0.25
+          }
+        },
+        "berserker_5": {
+          "nazwa": "SZAŁ BOJOWY",
+          "opis": "ULTIMATE: Aktywuj szał bojowy - przez 3 tury zadajesz 200% obrażeń, ale tracisz 5 HP na turę. (Cooldown: 5 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "berserker_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "rage_mode",
+            "damage_multiplier": 2.0,
+            "duration": 3,
+            "cost_per_turn": 5,
+            "cooldown": 5
+          }
+        }
+      }
+    },
+    "obronca": {
+      "nazwa": "Obrońca",
+      "opis": "Ścieżka nieugietego wojownika skupionego na obronie i wytrzymałości",
+      "talenty": {
+        "obronca_1": {
+          "nazwa": "Twardy Jak Stal",
+          "opis": "Twój pancerz jest twardszy. +2 do Klasy Pancerza.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "armor_bonus",
+            "wartosc": 2
+          }
+        },
+        "obronca_2": {
+          "nazwa": "Blok Tarczą",
+          "opis": "Gdy otrzymujesz obrażenia, odbijasz 30% z powrotem na atakującego.",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "obronca_1",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "damage_reflect",
+            "wartosc": 0.3
+          }
+        },
+        "obronca_3": {
+          "nazwa": "Kontratak",
+          "opis": "20% szansy na natychmiastowe kontratakowanie wroga który cię trafił.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "obronca_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "counter_attack",
+            "wartosc": 0.2
+          }
+        },
+        "obronca_4": {
+          "nazwa": "Nieugięty",
+          "opis": "Jesteś odporny na ogłuszenie i efekty kontroli tłumu.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "obronca_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "cc_immunity",
+            "wartosc": 1
+          }
+        },
+        "obronca_5": {
+          "nazwa": "FORTECA",
+          "opis": "ULTIMATE: Stajesz się niezniszczalny - przez 3 tury nie możesz spaść poniżej 1 HP. (Cooldown: 8 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "obronca_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "invulnerable",
+            "duration": 3,
+            "cooldown": 8
+          }
+        }
+      }
+    },
+    "mistrz_broni": {
+      "nazwa": "Mistrz Broni",
+      "opis": "Ścieżka precyzyjnego wojownika opanowującego sztukę walki na perfekcję",
+      "talenty": {
+        "mistrz_1": {
+          "nazwa": "Precyzyjne Cięcie",
+          "opis": "Twoje ataki są celniejsze. +2 do trafienia.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "attack_bonus",
+            "wartosc": 2
+          }
+        },
+        "mistrz_2": {
+          "nazwa": "Szybkie Ostrze",
+          "opis": "Możesz wykonać bonus atak lżejszą bronią (1d4) bez kary.",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "mistrz_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "bonus_light_attack",
+            "damage": "1d4"
+          }
+        },
+        "mistrz_3": {
+          "nazwa": "Krwawienie",
+          "opis": "Twoje cięcia powodują krwawienie. Wróg traci 2 HP na turę przez 3 tury po trafieniu.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "mistrz_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "apply_bleed",
+            "damage_per_turn": 2,
+            "duration": 3
+          }
+        },
+        "mistrz_4": {
+          "nazwa": "Mistrz Combo",
+          "opis": "Gdy trafisz 3 razy z rzędu, następny atak zadaje +50% obrażeń.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "mistrz_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "combo_master",
+            "hits_required": 3,
+            "damage_bonus": 0.5
+          }
+        },
+        "mistrz_5": {
+          "nazwa": "WICHER STALI",
+          "opis": "ULTIMATE: Atakujesz wszystkich wrogów naraz, zadając 150% normalnych obrażeń. (Cooldown: 6 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "mistrz_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "aoe_attack",
+            "damage_multiplier": 1.5,
+            "cooldown": 6
+          }
+        }
+      }
+    }
+  },
+  "mag": {
+    "destrukcja": {
+      "nazwa": "Destrukcja",
+      "opis": "Ścieżka niszczycielskiej magii żywiołów",
+      "talenty": {
+        "destrukcja_1": {
+          "nazwa": "Potęga Ognia",
+          "opis": "Twoje zaklęcia ognia zadają +15% obrażeń.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "fire_damage_bonus",
+            "wartosc": 0.15
+          }
+        },
+        "destrukcja_2": {
+          "nazwa": "Lodowa Włócznia",
+          "opis": "Nowe zaklęcie: Wystrzela lodową włócznię zadającą 3d8 obrażeń i spowalniającą wroga.",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "destrukcja_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "spell",
+            "spell_id": "ice_spear",
+            "damage": "3d8",
+            "effect": "slow",
+            "mana_cost": 3
+          }
+        },
+        "destrukcja_3": {
+          "nazwa": "Krytyk Magiczny",
+          "opis": "Twoje zaklęcia mają 10% szansy na trafienie krytyczne (2x obrażenia).",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "destrukcja_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "spell_crit_chance",
+            "wartosc": 10
+          }
+        },
+        "destrukcja_4": {
+          "nazwa": "Eksplozja Żywiołów",
+          "opis": "Zaklęcia obszarowe zadają +30% obrażeń.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "destrukcja_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "aoe_spell_bonus",
+            "wartosc": 0.3
+          }
+        },
+        "destrukcja_5": {
+          "nazwa": "METEOR",
+          "opis": "ULTIMATE: Sprowadzasz meteor zadający 12d6 obrażeń ognia wszystkim wrogom. (Koszt: 15 many, Cooldown: 7 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "destrukcja_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "meteor_spell",
+            "damage": "12d6",
+            "mana_cost": 15,
+            "cooldown": 7
+          }
+        }
+      }
+    },
+    "iluzja": {
+      "nazwa": "Iluzja",
+      "opis": "Ścieżka magii umysłu, kontroli i iluzji",
+      "talenty": {
+        "iluzja_1": {
+          "nazwa": "Zwierciadlany Obraz",
+          "opis": "Tworzysz iluzję siebie. Pierwsze 2 ataki na ciebie w walce chybiają.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "mirror_image",
+            "dodges": 2
+          }
+        },
+        "iluzja_2": {
+          "nazwa": "Niewidzialność",
+          "opis": "Stajesz się niewidzialny. Następny atak ma gwarantowane trafienie krytyczne. (Cooldown: 4 tury)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "iluzja_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "invisibility",
+            "next_attack_crit": true,
+            "cooldown": 4,
+            "mana_cost": 4
+          }
+        },
+        "iluzja_3": {
+          "nazwa": "Kontrola Umysłu",
+          "opis": "Wróg atakuje sam siebie przez 1 turę. (Cooldown: 5 tur)",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "iluzja_2",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "mind_control",
+            "duration": 1,
+            "cooldown": 5,
+            "mana_cost": 5
+          }
+        },
+        "iluzja_4": {
+          "nazwa": "Mistrz Iluzji",
+          "opis": "+20% szansy na uniknięcie ataku.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "iluzja_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "dodge_chance",
+            "wartosc": 20
+          }
+        },
+        "iluzja_5": {
+          "nazwa": "CZAS STOI",
+          "opis": "ULTIMATE: Zatrzymujesz czas - możesz wykonać 3 akcje pod rząd, wróg się nie rusza. (Koszt: 20 many, Cooldown: 10 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "iluzja_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "time_stop",
+            "extra_turns": 3,
+            "mana_cost": 20,
+            "cooldown": 10
+          }
+        }
+      }
+    },
+    "nekromancja": {
+      "nazwa": "Nekromancja",
+      "opis": "Ścieżka mrocznej magii życia i śmierci",
+      "talenty": {
+        "nekromancja_1": {
+          "nazwa": "Wysysanie Życia",
+          "opis": "Twoje zaklęcia ciemności leczą cię za 30% zadanych obrażeń.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "life_steal",
+            "wartosc": 0.3
+          }
+        },
+        "nekromancja_2": {
+          "nazwa": "Dotyk Śmierci",
+          "opis": "Nowe zaklęcie: Dotknięcie zadające 2d6 obrażeń nekrotycznych i osłabiające wroga (-2 do ataku na 2 tury).",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "nekromancja_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "spell",
+            "spell_id": "death_touch",
+            "damage": "2d6",
+            "effect": "weaken",
+            "mana_cost": 3
+          }
+        },
+        "nekromancja_3": {
+          "nazwa": "Przywołaj Szkieleta",
+          "opis": "Przywołujesz szkieleta który walczy u twojego boku przez 3 tury. (Cooldown: 6 tur)",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "nekromancja_2",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "summon",
+            "summon_id": "skeleton",
+            "duration": 3,
+            "cooldown": 6,
+            "mana_cost": 5
+          }
+        },
+        "nekromancja_4": {
+          "nazwa": "Nieumarły",
+          "opis": "Gdy spadniesz do 0 HP, powracasz z połową zdrowia. (Raz na walkę)",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "nekromancja_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "undying",
+            "restore_percent": 0.5
+          }
+        },
+        "nekromancja_5": {
+          "nazwa": "ARMIA NIEUMARŁYCH",
+          "opis": "ULTIMATE: Przywoływasz 3 szkielety które walczą przez 5 tur. (Koszt: 15 many, Cooldown: 8 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "nekromancja_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "summon_army",
+            "count": 3,
+            "duration": 5,
+            "mana_cost": 15,
+            "cooldown": 8
+          }
+        }
+      }
+    }
+  },
+  "lotr": {
+    "zabojca": {
+      "nazwa": "Zabójca",
+      "opis": "Ścieżka cichego mordercy atakującego z cienia",
+      "talenty": {
+        "zabojca_1": {
+          "nazwa": "Atak z Zaskoczenia",
+          "opis": "Pierwszy atak w walce zadaje +100% obrażeń.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "ambush",
+            "damage_multiplier": 2.0
+          }
+        },
+        "zabojca_2": {
+          "nazwa": "Trucizna Ostrzy",
+          "opis": "Pokrywasz broń trucizną. Wróg otrzymuje 3 obrażenia na turę przez 4 tury.",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "zabojca_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "poison_blade",
+            "damage_per_turn": 3,
+            "duration": 4,
+            "cooldown": 3
+          }
+        },
+        "zabojca_3": {
+          "nazwa": "Morderczy Cios",
+          "opis": "Twoje trafienia krytyczne zadają 3x obrażenia zamiast 2x.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "zabojca_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "deadly_crit",
+            "multiplier": 3
+          }
+        },
+        "zabojca_4": {
+          "nazwa": "Cienie",
+          "opis": "Znikasz w cieniach - wróg ma -4 do trafienia przeciwko tobie przez 2 tury. (Cooldown: 4 tury)",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "zabojca_3",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "vanish",
+            "enemy_attack_penalty": -4,
+            "duration": 2,
+            "cooldown": 4
+          }
+        },
+        "zabojca_5": {
+          "nazwa": "EGZEKUCJA",
+          "opis": "ULTIMATE: Natychmiastowo zabijasz wroga poniżej 30% HP. Przeciwko bossom zadajesz 500% obrażeń. (Cooldown: 10 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "zabojca_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "execute",
+            "threshold": 0.3,
+            "boss_damage_multiplier": 5.0,
+            "cooldown": 10
+          }
+        }
+      }
+    },
+    "akrobata": {
+      "nazwa": "Akrobata",
+      "opis": "Ścieżka zwinnego wojownika unikającego ataków",
+      "talenty": {
+        "akrobata_1": {
+          "nazwa": "Koci Refleks",
+          "opis": "+15% szansy na uniknięcie ataku.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "dodge_chance",
+            "wartosc": 15
+          }
+        },
+        "akrobata_2": {
+          "nazwa": "Salto w Tył",
+          "opis": "Wykonujesz salto unikając ataku i kontrując (1d6 obrażeń). (Cooldown: 3 tury)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "akrobata_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "backflip",
+            "dodge": true,
+            "counter_damage": "1d6",
+            "cooldown": 3
+          }
+        },
+        "akrobata_3": {
+          "nazwa": "Szybkie Stopy",
+          "opis": "Atakujesz zawsze pierwszy w turze, niezależnie od inicjatywy.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "akrobata_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "always_first",
+            "wartosc": 1
+          }
+        },
+        "akrobata_4": {
+          "nazwa": "Nieuchwytny",
+          "opis": "Gdy unikniesz ataku, zyskujesz +2 do następnego ataku.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "akrobata_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "dodge_bonus_attack",
+            "bonus": 2
+          }
+        },
+        "akrobata_5": {
+          "nazwa": "TANIEC ŚMIERCI",
+          "opis": "ULTIMATE: Wykonujesz serię 5 szybkich ataków (każdy 1d6) z 100% szansą na unik. (Cooldown: 7 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "akrobata_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "death_dance",
+            "attacks": 5,
+            "damage_per_attack": "1d6",
+            "invulnerable": true,
+            "cooldown": 7
+          }
+        }
+      }
+    },
+    "czarny_mag": {
+      "nazwa": "Czarny Mag",
+      "opis": "Ścieżka łotra władającego mroczną magią",
+      "talenty": {
+        "czarny_mag_1": {
+          "nazwa": "Sztylet Cienia",
+          "opis": "Twoje ataki zadają dodatkowe 1d4 obrażeń ciemności.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "shadow_damage",
+            "extra_damage": "1d4"
+          }
+        },
+        "czarny_mag_2": {
+          "nazwa": "Kula Dymu",
+          "opis": "Rzucasz kulę dymu - wróg ma -3 do trafienia na 2 tury. Ty zyskujesz +2 do ataku. (Cooldown: 4 tury, koszt: 3 many)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "czarny_mag_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "smoke_bomb",
+            "enemy_penalty": -3,
+            "self_bonus": 2,
+            "duration": 2,
+            "cooldown": 4,
+            "mana_cost": 3
+          }
+        },
+        "czarny_mag_3": {
+          "nazwa": "Teleportacja",
+          "opis": "Teleportujesz się za plecy wroga, następny atak to automatyczny krytyk. (Cooldown: 5 tur, koszt: 4 many)",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "czarny_mag_2",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "teleport_strike",
+            "next_crit": true,
+            "cooldown": 5,
+            "mana_cost": 4
+          }
+        },
+        "czarny_mag_4": {
+          "nazwa": "Okradnij Ducha",
+          "opis": "Każdy atak kradnie 2 many wrogowi i daje tobie (jeśli wróg ma manę).",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "czarny_mag_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "mana_steal",
+            "wartosc": 2
+          }
+        },
+        "czarny_mag_5": {
+          "nazwa": "KLON CIENIA",
+          "opis": "ULTIMATE: Tworzysz mrocznego klona - przez 4 tury atakujecie obaj, każdy zadaje pełne obrażenia. (Koszt: 15 many, Cooldown: 9 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "czarny_mag_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "shadow_clone",
+            "duration": 4,
+            "mana_cost": 15,
+            "cooldown": 9
+          }
+        }
+      }
+    }
+  },
+  "kleryk": {
+    "uzdrowiciel": {
+      "nazwa": "Uzdrowiciel",
+      "opis": "Ścieżka kapłana skupionego na leczeniu i wsparciu",
+      "talenty": {
+        "uzdrowiciel_1": {
+          "nazwa": "Wzmocnione Leczenie",
+          "opis": "Wszystkie twoje zaklęcia leczące przywracają +30% HP.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "healing_bonus",
+            "wartosc": 0.3
+          }
+        },
+        "uzdrowiciel_2": {
+          "nazwa": "Regeneracja",
+          "opis": "Rzucasz błogosławieństwo regeneracji - przywracasz 3 HP na turę przez 5 tur. (Cooldown: 4 tury, koszt: 3 many)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "uzdrowiciel_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "regeneration",
+            "heal_per_turn": 3,
+            "duration": 5,
+            "cooldown": 4,
+            "mana_cost": 3
+          }
+        },
+        "uzdrowiciel_3": {
+          "nazwa": "Aura Życia",
+          "opis": "Odzyskujesz 2 HP na początku każdej tury w walce.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "uzdrowiciel_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "life_aura",
+            "heal_per_turn": 2
+          }
+        },
+        "uzdrowiciel_4": {
+          "nazwa": "Boska Ochrona",
+          "opis": "Gdy otrzymasz obrażenia śmiertelne, automatycznie leczysz się o 25% max HP. (Raz na walkę)",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "uzdrowiciel_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "divine_protection",
+            "heal_percent": 0.25
+          }
+        },
+        "uzdrowiciel_5": {
+          "nama": "ZMARTWYCHWSTANIE",
+          "opis": "ULTIMATE: Gdy spadniesz do 0 HP, natychmiast wracasz z pełnym zdrowiem. (Raz na grę - nie resetuje się!)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "uzdrowiciel_4",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "resurrection",
+            "uses": 1
+          }
+        }
+      }
+    },
+    "inkwizytor": {
+      "nazwa": "Inkwizytor",
+      "opis": "Ścieżka wojowniczego kapłana karącego bezbożnych",
+      "talenty": {
+        "inkwizytor_1": {
+          "nazwa": "Święty Płomień",
+          "opis": "Twoje ataki zadają dodatkowe 1d4 obrażeń świętego ognia nieumarłym i demonom.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "holy_fire",
+            "extra_damage": "1d4",
+            "przeciwko": ["nieumarły", "demon"]
+          }
+        },
+        "inkwizytor_2": {
+          "nazwa": "Wygnanie",
+          "opis": "Natychmiast pokonujesz nieumarłego o poziomie 3 lub niższym. Przeciwko wyższym: 4d6 obrażeń. (Cooldown: 5 tur, koszt: 4 many)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "inkwizytor_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "banish",
+            "instant_kill_level": 3,
+            "damage_otherwise": "4d6",
+            "cooldown": 5,
+            "mana_cost": 4
+          }
+        },
+        "inkwizytor_3": {
+          "nazwa": "Gniew Prawy",
+          "opis": "+20% obrażeń przeciwko nieumarłym, demonom i złu.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "inkwizytor_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "righteous_fury",
+            "damage_bonus": 0.2,
+            "przeciwko": ["nieumarły", "demon", "zło"]
+          }
+        },
+        "inkwizytor_4": {
+          "nazwa": "Święta Osłona",
+          "opis": "Zyskujesz odporność na efekty nekromancji i mrocznej magii.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "inkwizytor_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "holy_shield",
+            "immunity": ["necromancy", "dark_magic"]
+          }
+        },
+        "inkwizytor_5": {
+          "nazwa": "ŚWIĘTY GNIEW",
+          "opis": "ULTIMATE: Spuszczasz boską karę - wszystkich wrogów trafia promień światła za 10d6 obrażeń. (Koszt: 20 many, Cooldown: 8 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "inkwizytor_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "divine_wrath",
+            "damage": "10d6",
+            "aoe": true,
+            "mana_cost": 20,
+            "cooldown": 8
+          }
+        }
+      }
+    },
+    "paladyn": {
+      "nazwa": "Paladyn",
+      "opis": "Ścieżka świętego wojownika łączącego moc boga z mieczem",
+      "talenty": {
+        "paladyn_1": {
+          "nazwa": "Święte Uderzenie",
+          "opis": "Twoja broń świeci świętym światłem. +1d4 obrażeń świętych do każdego ataku.",
+          "poziom": 1,
+          "wymagany_poziom_postaci": 2,
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "holy_strike",
+            "extra_damage": "1d4"
+          }
+        },
+        "paladyn_2": {
+          "nazwa": "Kładący Ręce",
+          "opis": "Leczysz się dotknięciem za 2d6+4 HP. (Cooldown: 3 tury, koszt: 2 many)",
+          "poziom": 2,
+          "wymagany_poziom_postaci": 4,
+          "wymaga": "paladyn_1",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "lay_on_hands",
+            "healing": "2d6+4",
+            "cooldown": 3,
+            "mana_cost": 2
+          }
+        },
+        "paladyn_3": {
+          "nazwa": "Święta Obrona",
+          "opis": "+3 do KP i odporność na trucizny i choroby.",
+          "poziom": 3,
+          "wymagany_poziom_postaci": 6,
+          "wymaga": "paladyn_2",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "holy_defense",
+            "armor_bonus": 3,
+            "immunity": ["poison", "disease"]
+          }
+        },
+        "paladyn_4": {
+          "nazwa": "Aura Odwagi",
+          "opis": "Jesteś nieustraszo ny - odporny na strach i efekty moralne. +10% do wszystkich obrażeń.",
+          "poziom": 4,
+          "wymagany_poziom_postaci": 8,
+          "wymaga": "paladyn_3",
+          "typ": "pasywny",
+          "efekt": {
+            "typ": "aura_of_courage",
+            "fear_immune": true,
+            "damage_bonus": 0.1
+          }
+        },
+        "paladyn_5": {
+          "nazwa": "BOSKA ZEMSTA",
+          "opis": "ULTIMATE: Transformujesz się w świetlistego awatara - przez 4 tury zadajesz 200% obrażeń, masz +5 KP i leczysz się za 50% zadanych obrażeń. (Koszt: 15 many, Cooldown: 10 tur)",
+          "poziom": 5,
+          "wymagany_poziom_postaci": 10,
+          "wymaga": "paladyn_4",
+          "typ": "aktywny",
+          "efekt": {
+            "typ": "divine_avatar",
+            "damage_multiplier": 2.0,
+            "armor_bonus": 5,
+            "lifesteal": 0.5,
+            "duration": 4,
+            "mana_cost": 15,
+            "cooldown": 10
+          }
+        }
+      }
+    }
+  }
+}

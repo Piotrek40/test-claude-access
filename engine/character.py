@@ -75,6 +75,12 @@ class Character:
         # Efekty statusowe
         self.status_effects = []
 
+        # System talentów
+        self.talent_points = 0  # Punkty talentów do wydania
+        self.learned_talents = []  # Lista wyuczonych talentów (IDs)
+        self.talent_cooldowns = {}  # Cooldowny aktywnych talentów {talent_id: pozostałe_tury}
+        self.talent_buffs = {}  # Aktywne buffy z talentów {buff_name: remaining_turns}
+
     def _init_starting_equipment(self):
         """Inicjalizuje startowy ekwipunek."""
         with open('data/items.json', 'r', encoding='utf-8') as f:
@@ -226,6 +232,10 @@ class Character:
             if 'sloty_zakleć' in self.class_data and level_str in self.class_data['sloty_zakleć']:
                 self.spell_slots = self.class_data['sloty_zakleć'][level_str].copy()
 
+        # Daj punkt talentu (od poziomu 2)
+        if self.level >= 2:
+            self.talent_points += 1
+
     def add_item(self, item):
         """Dodaje przedmiot do ekwipunku."""
         self.inventory.append(item)
@@ -307,6 +317,188 @@ class Character:
         if 'sloty_zakleć' in self.class_data and level_str in self.class_data['sloty_zakleć']:
             self.spell_slots = self.class_data['sloty_zakleć'][level_str].copy()
 
+    # ===== SYSTEM TALENTÓW =====
+
+    def get_talent_data(self, talent_id):
+        """
+        Pobiera dane talentu z JSON.
+
+        Args:
+            talent_id: ID talentu (np. 'berserker_1')
+
+        Returns:
+            Dict z danymi talentu lub None
+        """
+        with open('data/talents.json', 'r', encoding='utf-8') as f:
+            talents_data = json.load(f)
+
+        # Szukaj talentu w odpowiedniej klasie i ścieżce
+        for tree_name, tree_data in talents_data[self.character_class].items():
+            if talent_id in tree_data['talenty']:
+                return tree_data['talenty'][talent_id]
+        return None
+
+    def can_learn_talent(self, talent_id):
+        """
+        Sprawdza czy postać może się nauczyć talentu.
+
+        Args:
+            talent_id: ID talentu
+
+        Returns:
+            Tuple (możliwe: bool, powód: str)
+        """
+        # Czy już ma ten talent?
+        if talent_id in self.learned_talents:
+            return False, "Już znasz ten talent!"
+
+        talent_data = self.get_talent_data(talent_id)
+        if not talent_data:
+            return False, "Nieznany talent!"
+
+        # Sprawdź poziom postaci
+        if self.level < talent_data['wymagany_poziom_postaci']:
+            return False, f"Wymagany poziom {talent_data['wymagany_poziom_postaci']}"
+
+        # Sprawdź wymagania (poprzedni talent)
+        if 'wymaga' in talent_data:
+            required_talent = talent_data['wymaga']
+            if required_talent not in self.learned_talents:
+                req_data = self.get_talent_data(required_talent)
+                return False, f"Wymaga talentu: {req_data['nazwa']}"
+
+        # Sprawdź punkty talentów
+        if self.talent_points <= 0:
+            return False, "Brak punktów talentów!"
+
+        return True, "OK"
+
+    def learn_talent(self, talent_id):
+        """
+        Uczy postać talentu.
+
+        Args:
+            talent_id: ID talentu
+
+        Returns:
+            Tuple (sukces: bool, wiadomość: str)
+        """
+        can_learn, reason = self.can_learn_talent(talent_id)
+        if not can_learn:
+            return False, reason
+
+        talent_data = self.get_talent_data(talent_id)
+        self.learned_talents.append(talent_id)
+        self.talent_points -= 1
+
+        return True, f"Nauczyłeś się: {talent_data['nazwa']}!"
+
+    def has_talent(self, talent_id):
+        """Sprawdza czy postać ma dany talent."""
+        return talent_id in self.learned_talents
+
+    def get_active_talents(self):
+        """
+        Zwraca listę aktywnych talentów (do użycia w walce).
+
+        Returns:
+            Lista tuple (talent_id, talent_data)
+        """
+        active = []
+        for talent_id in self.learned_talents:
+            talent_data = self.get_talent_data(talent_id)
+            if talent_data and talent_data['typ'] == 'aktywny':
+                # Sprawdź cooldown
+                if talent_id not in self.talent_cooldowns or self.talent_cooldowns[talent_id] <= 0:
+                    active.append((talent_id, talent_data))
+        return active
+
+    def use_talent(self, talent_id):
+        """
+        Używa aktywnego talentu (ustawia cooldown).
+
+        Args:
+            talent_id: ID talentu
+
+        Returns:
+            Tuple (sukces: bool, efekt: dict)
+        """
+        if talent_id not in self.learned_talents:
+            return False, None
+
+        talent_data = self.get_talent_data(talent_id)
+        if not talent_data or talent_data['typ'] != 'aktywny':
+            return False, None
+
+        # Sprawdź cooldown
+        if talent_id in self.talent_cooldowns and self.talent_cooldowns[talent_id] > 0:
+            return False, None
+
+        # Sprawdź koszt many (jeśli jest)
+        if 'mana_cost' in talent_data['efekt']:
+            cost = talent_data['efekt']['mana_cost']
+            if hasattr(self, 'mana') and self.mana >= cost:
+                self.mana -= cost
+            else:
+                return False, None
+
+        # Ustaw cooldown
+        if 'cooldown' in talent_data['efekt']:
+            self.talent_cooldowns[talent_id] = talent_data['efekt']['cooldown']
+
+        return True, talent_data['efekt']
+
+    def update_talent_cooldowns(self):
+        """Aktualizuje cooldowny talentów (wywołuj co turę)."""
+        for talent_id in list(self.talent_cooldowns.keys()):
+            if self.talent_cooldowns[talent_id] > 0:
+                self.talent_cooldowns[talent_id] -= 1
+
+    def get_talent_bonuses(self):
+        """
+        Oblicza wszystkie bonusy z pasywnych talentów.
+
+        Returns:
+            Dict z bonusami
+        """
+        bonuses = {
+            'damage_bonus': 0,
+            'armor_bonus': 0,
+            'attack_bonus': 0,
+            'crit_chance': 0,
+            'dodge_chance': 0,
+            'life_aura': 0,
+            'combat_regen': 0,
+        }
+
+        for talent_id in self.learned_talents:
+            talent_data = self.get_talent_data(talent_id)
+            if not talent_data or talent_data['typ'] != 'pasywny':
+                continue
+
+            efekt = talent_data['efekt']
+            typ = efekt['typ']
+
+            # Mapuj efekty na bonusy
+            if typ == 'damage_bonus':
+                bonuses['damage_bonus'] += efekt['wartosc']
+            elif typ == 'armor_bonus':
+                bonuses['armor_bonus'] += efekt['wartosc']
+            elif typ == 'attack_bonus':
+                bonuses['attack_bonus'] += efekt['wartosc']
+            elif typ == 'crit_chance':
+                bonuses['crit_chance'] += efekt['wartosc']
+            elif typ == 'dodge_chance':
+                bonuses['dodge_chance'] += efekt['wartosc']
+            elif typ == 'life_aura':
+                bonuses['life_aura'] += efekt['heal_per_turn']
+            elif typ == 'combat_regen':
+                bonuses['combat_regen'] += efekt['wartosc']
+
+        return bonuses
+
+    # ===== KONIEC SYSTEMU TALENTÓW =====
+
     def to_dict(self):
         """Konwertuje postać do słownika (do zapisu)."""
         return {
@@ -328,7 +520,11 @@ class Character:
             'active_quests': self.active_quests,
             'completed_quests': self.completed_quests,
             'current_location': self.current_location,
-            'status_effects': self.status_effects
+            'status_effects': self.status_effects,
+            'talent_points': self.talent_points,
+            'learned_talents': self.learned_talents,
+            'talent_cooldowns': self.talent_cooldowns,
+            'talent_buffs': self.talent_buffs
         }
 
     @staticmethod
@@ -351,4 +547,8 @@ class Character:
         char.completed_quests = data['completed_quests']
         char.current_location = data['current_location']
         char.status_effects = data['status_effects']
+        char.talent_points = data.get('talent_points', 0)
+        char.learned_talents = data.get('learned_talents', [])
+        char.talent_cooldowns = data.get('talent_cooldowns', {})
+        char.talent_buffs = data.get('talent_buffs', {})
         return char
