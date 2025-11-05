@@ -107,8 +107,19 @@ class CombatSystem:
             'bleeding_damage': 0,  # Obrażenia za turę
             'poisoned': 0,  # Tury trucizny
             'poison_damage': 0,  # Obrażenia za turę
-            'weakened': 0,  # Tury osłabienia
+            'weakened': 0,  # Tury osłabienia (-50% dmg)
             'slowed': 0,  # Tury spowolnienia
+            'stunned': 0,  # Tury ogłuszenia (skip turn)
+            'burned': 0,  # Tury podpalenia
+            'burn_damage': 0,  # Obrażenia ognia za turę
+            'frozen': 0,  # Tury zamrożenia (stunned + vulnerable)
+            'vulnerable': 0,  # Tury podatności (+50% otrzymanych dmg)
+        }
+
+        # Efekty statusowe na graczu (temporary buffs/debuffs)
+        self.player_effects = {
+            'defensive_buff': 0,  # Tury bonusu +2 AC
+            'vulnerable': 0,  # Tury podatności (AC znacznie obniżone)
         }
 
     def start_combat(self):
@@ -216,6 +227,36 @@ class CombatSystem:
             print(colored_text(f"☠ {self.monster.name} jest zatruty: -{dmg} HP", 'green'))
             self.monster_effects['poisoned'] -= 1
 
+        # Podpalenie
+        if self.monster_effects['burned'] > 0:
+            dmg = self.monster_effects['burn_damage']
+            self.monster.take_damage(dmg)
+            print(colored_text(f"🔥 {self.monster.name} płonie: -{dmg} HP", 'red'))
+            self.monster_effects['burned'] -= 1
+
+        # Zmniejsz liczniki innych status effects na potworze
+        if self.monster_effects['weakened'] > 0:
+            self.monster_effects['weakened'] -= 1
+            if self.monster_effects['weakened'] == 0:
+                print(colored_text(f"💪 {self.monster.name} odzyskał pełną siłę!", 'yellow'))
+
+        if self.monster_effects['vulnerable'] > 0:
+            self.monster_effects['vulnerable'] -= 1
+            if self.monster_effects['vulnerable'] == 0:
+                print(colored_text(f"🛡️ {self.monster.name} nie jest już podatny na obrażenia!", 'yellow'))
+
+        if self.monster_effects['slowed'] > 0:
+            self.monster_effects['slowed'] -= 1
+
+        # Zmniejsz liczniki player_effects
+        if self.player_effects['defensive_buff'] > 0:
+            self.player_effects['defensive_buff'] -= 1
+
+        if self.player_effects['vulnerable'] > 0:
+            self.player_effects['vulnerable'] -= 1
+            if self.player_effects['vulnerable'] == 0:
+                print_success("🛡️ Twoja obrona wróciła do normy!")
+
     def player_turn(self):
         """Tura gracza."""
         print(f"\n--- Twoja tura ---")
@@ -249,7 +290,7 @@ class CombatSystem:
         action = actions[choice_num - 1]
 
         if action == "Atakuj":
-            self.player_attack()
+            self.player_attack_menu()
         elif action == "Użyj umiejętności":
             self.player_use_talent()
         elif action == "Rzuć zaklęcie":
@@ -260,24 +301,117 @@ class CombatSystem:
             if self.attempt_flee():
                 return True
 
-    def player_attack(self):
+    def player_attack_menu(self):
+        """Menu wyboru typu ataku."""
+        print("\n--- Wybierz typ ataku ---")
+        attack_options = [
+            ("Normalny Atak", "normal", "Standardowy atak bronią"),
+            ("Potężny Cios", "power", "+50% dmg, -3 do trafienia"),
+            ("Precyzyjny Cios", "precise", "+3 do trafienia, +10% crit"),
+            ("Postawa Obronna", "defensive", "+2 AC następna tura, -50% dmg"),
+            ("Atak Na Całość", "all_out", "+100% dmg, AC=0 następna tura!"),
+            ("Cios Osłabiający", "disabling", "50% szansy na ogłuszenie wroga"),
+        ]
+
+        for i, (name, _, desc) in enumerate(attack_options, 1):
+            print(f"  {i}. {name}")
+            print(f"     {colored_text(desc, 'cyan')}")
+
+        print(f"  0. Anuluj")
+
+        while True:
+            try:
+                choice = input("\nWybór: ").strip()
+                choice_num = int(choice)
+                if choice_num == 0:
+                    return  # Wróć do menu głównego
+                if 1 <= choice_num <= len(attack_options):
+                    attack_type = attack_options[choice_num - 1][1]
+                    self.player_attack(attack_type)
+                    return
+                print(f"Wybierz liczbę od 0 do {len(attack_options)}!")
+            except ValueError:
+                print("Wprowadź poprawną liczbę!")
+
+    def player_attack(self, attack_type='normal'):
         """Gracz atakuje."""
         import random
+
+        # Konfiguracja modyfikatorów dla różnych typów ataku
+        attack_configs = {
+            'normal': {
+                'name': 'Normalny Atak',
+                'attack_mod': 0,
+                'damage_mult': 1.0,
+                'crit_bonus': 0,
+                'effect': None
+            },
+            'power': {
+                'name': 'Potężny Cios',
+                'attack_mod': -3,
+                'damage_mult': 1.5,
+                'crit_bonus': 0,
+                'effect': None
+            },
+            'precise': {
+                'name': 'Precyzyjny Cios',
+                'attack_mod': 3,
+                'damage_mult': 1.0,
+                'crit_bonus': 10,
+                'effect': None
+            },
+            'defensive': {
+                'name': 'Postawa Obronna',
+                'attack_mod': 0,
+                'damage_mult': 0.5,
+                'crit_bonus': 0,
+                'effect': 'defensive_buff'
+            },
+            'all_out': {
+                'name': 'Atak Na Całość',
+                'attack_mod': 0,
+                'damage_mult': 2.0,
+                'crit_bonus': 0,
+                'effect': 'vulnerable_self'
+            },
+            'disabling': {
+                'name': 'Cios Osłabiający',
+                'attack_mod': 0,
+                'damage_mult': 1.0,
+                'crit_bonus': 0,
+                'effect': 'stun_chance'
+            }
+        }
+
+        config = attack_configs.get(attack_type, attack_configs['normal'])
+
+        # Wyświetl nazwę ataku jeśli nie jest normalny
+        if attack_type != 'normal':
+            print(colored_text(f"\n⚔️ {config['name']}!", 'yellow'))
 
         # Sprawdź bonus do ataku z talentów
         attack_bonus_from_talents = self.talent_bonuses.get('attack_bonus', 0)
 
+        # Dodaj modyfikator z typu ataku
+        attack_bonus_total = attack_bonus_from_talents + config['attack_mod']
+
         # Rzut na trafienie
         attack_roll = d20()
-        total_attack = attack_roll + self.player.attack_bonus + attack_bonus_from_talents
+        total_attack = attack_roll + self.player.attack_bonus + attack_bonus_total
 
-        if attack_bonus_from_talents > 0:
-            print(f"\n🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} + {attack_bonus_from_talents} (talent) = {total_attack}")
+        # Wyświetl rzut
+        if attack_bonus_total != 0:
+            if attack_bonus_from_talents > 0 and config['attack_mod'] != 0:
+                print(f"🎲 Rzut: {attack_roll} + {self.player.attack_bonus} + {attack_bonus_from_talents} (talent) {config['attack_mod']:+d} (atak) = {total_attack}")
+            elif attack_bonus_from_talents > 0:
+                print(f"🎲 Rzut: {attack_roll} + {self.player.attack_bonus} + {attack_bonus_from_talents} (talent) = {total_attack}")
+            else:
+                print(f"🎲 Rzut: {attack_roll} + {self.player.attack_bonus} {config['attack_mod']:+d} (atak) = {total_attack}")
         else:
-            print(f"\n🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} = {total_attack}")
+            print(f"🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} = {total_attack}")
 
-        # Sprawdź bonus do szansy krytycznej z talentów
-        crit_chance_bonus = self.talent_bonuses.get('crit_chance', 0)
+        # Sprawdź bonus do szansy krytycznej z talentów + typ ataku
+        crit_chance_bonus = self.talent_bonuses.get('crit_chance', 0) + config['crit_bonus']
         crit_threshold = 20 - (crit_chance_bonus // 5)  # Każde 5% = -1 do progu (np. 5% -> crit na 19-20)
 
         # Krytyk (naturalny lub z bonusem)
@@ -298,6 +432,15 @@ class CombatSystem:
             # Zastosuj bonus do obrażeń z talentów
             damage = self.apply_damage_bonuses(damage)
 
+            # Zastosuj mnożnik z typu ataku
+            if config['damage_mult'] != 1.0:
+                original_damage = damage
+                damage = int(damage * config['damage_mult'])
+                if config['damage_mult'] < 1.0:
+                    print(colored_text(f"  ⚠️ Postawa obronna: {original_damage} → {damage} obrażeń", 'blue'))
+                else:
+                    print(colored_text(f"  💥 Mnożnik: {original_damage} → {damage} obrażeń!", 'red'))
+
             print(f"⚔ Zadajesz {damage} obrażeń!")
             self.monster.take_damage(damage)
 
@@ -309,6 +452,9 @@ class CombatSystem:
 
             # Sprawdź efekty statusowe (krwawienie, trucizna)
             self.apply_status_effects()
+
+            # Aplikuj specjalne efekty typu ataku
+            self.apply_attack_type_effects(config)
             return
 
         # Automatyczna porażka
@@ -334,6 +480,15 @@ class CombatSystem:
             # Zastosuj bonus do obrażeń z talentów
             damage = self.apply_damage_bonuses(damage)
 
+            # Zastosuj mnożnik z typu ataku
+            if config['damage_mult'] != 1.0:
+                original_damage = damage
+                damage = int(damage * config['damage_mult'])
+                if config['damage_mult'] < 1.0:
+                    print(colored_text(f"  ⚠️ Postawa obronna: {original_damage} → {damage} obrażeń", 'blue'))
+                else:
+                    print(colored_text(f"  💥 Mnożnik: {original_damage} → {damage} obrażeń!", 'red'))
+
             print(f"✓ Trafiasz! Zadajesz {damage} obrażeń!")
             self.monster.take_damage(damage)
 
@@ -345,9 +500,16 @@ class CombatSystem:
 
             # Sprawdź efekty statusowe (krwawienie, trucizna)
             self.apply_status_effects()
+
+            # Aplikuj specjalne efekty typu ataku
+            self.apply_attack_type_effects(config)
         else:
             print(colored_text("✗ Chybiasz!", 'red'))
             self.combo_hits = 0  # Reset combo
+
+            # Nawet jeśli chybiliśmy, niektóre efekty się aplikują
+            if config['effect'] in ['defensive_buff', 'all_out']:
+                self.apply_attack_type_effects(config)
 
     def apply_damage_bonuses(self, base_damage):
         """
@@ -420,6 +582,35 @@ class CombatSystem:
                 self.monster_effects['poisoned'] = 4  # 4 tury
                 self.monster_effects['poison_damage'] = 2 + self.player.level // 2
                 print(colored_text(f"  ☠️ {self.monster.name} został zatruty!", 'green'))
+
+    def apply_attack_type_effects(self, attack_config):
+        """
+        Aplikuje specjalne efekty z typu ataku.
+
+        Args:
+            attack_config: Konfiguracja typu ataku
+        """
+        import random
+
+        effect = attack_config.get('effect')
+
+        if effect == 'defensive_buff':
+            # Postawa Obronna: +2 AC do następnej tury wroga
+            self.player_effects['defensive_buff'] = 1
+            print(colored_text("  🛡️ Przyjmujesz postawę obronną (+2 AC do następnej tury wroga)!", 'blue'))
+
+        elif effect == 'vulnerable_self':
+            # Atak Na Całość: AC znacznie obniżone do następnej tury wroga
+            self.player_effects['vulnerable'] = 1
+            print(colored_text("  ⚠️ Odkryłeś swoją obronę! (KP obniżone do następnej tury wroga)", 'red'))
+
+        elif effect == 'stun_chance':
+            # Cios Osłabiający: 50% szansy na ogłuszenie
+            if random.random() < 0.50:
+                self.monster_effects['stunned'] = 1  # 1 tura
+                print(colored_text(f"  💫 {self.monster.name} został ogłuszony! Traci następną turę!", 'yellow'))
+            else:
+                print(colored_text(f"  ⚠️ {self.monster.name} oparł się ogłuszeniu!", 'yellow'))
 
     def player_use_talent(self):
         """Gracz używa aktywnej umiejętności z talentów."""
@@ -666,19 +857,48 @@ class CombatSystem:
 
         print(f"\n--- Tura {self.monster.name} ---")
 
+        # Sprawdź czy potwór jest ogłuszony
+        if self.monster_effects['stunned'] > 0:
+            print(colored_text(f"💫 {self.monster.name} jest ogłuszony! Traci turę!", 'yellow'))
+            self.monster_effects['stunned'] -= 1
+            return
+
+        # Sprawdź inne status effects które mogą skipować turę
+        if self.monster_effects['frozen'] > 0:
+            print(colored_text(f"❄️ {self.monster.name} jest zamrożony! Traci turę!", 'cyan'))
+            self.monster_effects['frozen'] -= 1
+            # Frozen również daje vulnerable
+            self.monster_effects['vulnerable'] = max(self.monster_effects['vulnerable'], 1)
+            return
+
         # Potwór atakuje
         attack_roll, attack_bonus, damage_roll = self.monster.attack()
 
-        # Sprawdź KP z bonusem z talentów
+        # Sprawdź KP gracza z modyfikatorami
         player_ac = self.player.armor_class + self.talent_bonuses.get('armor_bonus', 0)
+
+        # Dodaj bonus z postawy obronnej
+        if self.player_effects['defensive_buff'] > 0:
+            player_ac += 2
+
+        # Znacznie obniż AC jeśli gracz jest vulnerable (Atak Na Całość)
+        if self.player_effects['vulnerable'] > 0:
+            player_ac = max(5, player_ac - 10)  # Minimum 5 AC
 
         total_attack = attack_roll + attack_bonus
 
         print(f"🎲 {self.monster.name} atakuje!")
+
+        # Wyświetl AC z modyfikatorami
+        ac_info = f"{self.player.armor_class}"
         if self.talent_bonuses.get('armor_bonus', 0) > 0:
-            print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {player_ac} ({self.player.armor_class}+{self.talent_bonuses['armor_bonus']} z talentów)")
-        else:
-            print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {player_ac}")
+            ac_info += f"+{self.talent_bonuses['armor_bonus']} (talent)"
+        if self.player_effects['defensive_buff'] > 0:
+            ac_info += f"+2 (obrona)"
+        if self.player_effects['vulnerable'] > 0:
+            ac_info += colored_text(f" -10 (VULNERABLE!)", 'red')
+
+        print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {player_ac} ({ac_info})")
 
         # Sprawdź niewidzialność (auto-dodge)
         if 'invisibility' in self.player.talent_buffs:
