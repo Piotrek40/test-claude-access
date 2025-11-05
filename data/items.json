@@ -1,0 +1,258 @@
+{
+  "bron": {
+    "miecz_dlugi": {
+      "nazwa": "Miecz Długi",
+      "typ": "bron",
+      "rodzaj_broni": "jednoręczna",
+      "obrazenia": "1d8",
+      "bonus_ataku": 0,
+      "atrybut": "sila",
+      "wartosc": 50,
+      "waga": 3,
+      "opis": "Solidny miecz bojowy, ulubiona broń wojowników."
+    },
+    "sztylet": {
+      "nazwa": "Sztylet",
+      "typ": "bron",
+      "rodzaj_broni": "lekka",
+      "obrazenia": "1d4",
+      "bonus_ataku": 1,
+      "atrybut": "zrecznosc",
+      "wartosc": 20,
+      "waga": 1,
+      "opis": "Lekka i śmiertelnie ostra broń, idealna do cichych zabójstw."
+    },
+    "buzdygan": {
+      "nazwa": "Buzdygan",
+      "typ": "bron",
+      "rodzaj_broni": "jednoręczna",
+      "obrazenia": "1d6",
+      "bonus_ataku": 0,
+      "atrybut": "sila",
+      "wartosc": 30,
+      "waga": 4,
+      "opis": "Prosta ale skuteczna broń obuchowa."
+    },
+    "rozdzka": {
+      "nazwa": "Różdżka",
+      "typ": "bron",
+      "rodzaj_broni": "magiczna",
+      "obrazenia": "1d4",
+      "bonus_ataku": 0,
+      "bonus_magiczny": 1,
+      "atrybut": "inteligencja",
+      "wartosc": 100,
+      "waga": 1,
+      "opis": "Różdżka koncentrująca moc arkańską."
+    },
+    "kusza_lekka": {
+      "nazwa": "Kusza Lekka",
+      "typ": "bron",
+      "rodzaj_broni": "dystansowa",
+      "obrazenia": "1d8",
+      "bonus_ataku": 0,
+      "zasieg": "dystansowa",
+      "atrybut": "zrecznosc",
+      "wartosc": 50,
+      "waga": 5,
+      "opis": "Kompaktowa kusza, łatwa w ukryciu."
+    },
+    "miecz_elficki": {
+      "nazwa": "Miecz Elficki +1",
+      "typ": "bron",
+      "rodzaj_broni": "jednoręczna",
+      "obrazenia": "1d8",
+      "bonus_ataku": 1,
+      "bonus_obrazen": 1,
+      "magiczny": true,
+      "atrybut": "zrecznosc",
+      "wartosc": 500,
+      "waga": 2,
+      "opis": "Pięknie wykonany miecz elfickiej roboty, lekki jak piórko i ostry jak brzytwa."
+    },
+    "topor_bojowy": {
+      "nazwa": "Topór Bojowy",
+      "typ": "bron",
+      "rodzaj_broni": "dwuręczna",
+      "obrazenia": "1d12",
+      "bonus_ataku": 0,
+      "atrybut": "sila",
+      "wartosc": 80,
+      "waga": 7,
+      "opis": "Potężny topór wymagający dwóch rąk, ale zadający ogromne obrażenia."
+    }
+  },
+  "zbroje": {
+    "skorzana_zbroja": {
+      "nazwa": "Skórzana Zbroja",
+      "typ": "zbroja",
+      "klasa_pancerza": 11,
+      "bonus_zrecznosci": true,
+      "wymagana_sila": 0,
+      "utrudnienie_skradania": false,
+      "wartosc": 50,
+      "waga": 10,
+      "opis": "Lekka i elastyczna zbroja ze wzmocnionej skóry."
+    },
+    "zbroja_kolcza": {
+      "nazwa": "Zbroja Kolcza",
+      "typ": "zbroja",
+      "klasa_pancerza": 16,
+      "bonus_zrecznosci": false,
+      "wymagana_sila": 13,
+      "utrudnienie_skradania": true,
+      "wartosc": 200,
+      "waga": 55,
+      "opis": "Solidna zbroja z połączonych stalowych kółek."
+    },
+    "kolczuga": {
+      "nazwa": "Kolczuga",
+      "typ": "zbroja",
+      "klasa_pancerza": 13,
+      "bonus_zrecznosci": false,
+      "wymagana_sila": 0,
+      "utrudnienie_skradania": true,
+      "wartosc": 75,
+      "waga": 20,
+      "opis": "Lekka kolcza, dobry kompromis między ochroną a mobilnością."
+    },
+    "szaty_maga": {
+      "nazwa": "Szaty Maga",
+      "typ": "zbroja",
+      "klasa_pancerza": 10,
+      "bonus_zrecznosci": true,
+      "bonus_magiczny": 1,
+      "wymagana_sila": 0,
+      "utrudnienie_skradania": false,
+      "wartosc": 150,
+      "waga": 4,
+      "opis": "Mystyczne szaty wzmacniające moc magiczną."
+    },
+    "platynowa_zbroja": {
+      "nazwa": "Zbroja Płytowa",
+      "typ": "zbroja",
+      "klasa_pancerza": 18,
+      "bonus_zrecznosci": false,
+      "wymagana_sila": 15,
+      "utrudnienie_skradania": true,
+      "wartosc": 1500,
+      "waga": 65,
+      "opis": "Najlepsza dostępna zbroja, pełna stalowa płytówka."
+    }
+  },
+  "tarcze": {
+    "tarcza": {
+      "nazwa": "Tarcza",
+      "typ": "tarcza",
+      "bonus_kp": 2,
+      "wartosc": 50,
+      "waga": 6,
+      "opis": "Solidna drewniana tarcza ze stalowym okuciu."
+    }
+  },
+  "mikstury": {
+    "mikstura_leczenia": {
+      "nazwa": "Mikstura Leczenia",
+      "typ": "mikstura",
+      "efekt": "leczenie",
+      "moc": "2d4+2",
+      "wartosc": 50,
+      "waga": 0.5,
+      "opis": "Czerwona mikstura przywracająca zdrowie."
+    },
+    "mikstura_many": {
+      "nazwa": "Mikstura Many",
+      "typ": "mikstura",
+      "efekt": "mana",
+      "moc": "2d4+2",
+      "wartosc": 50,
+      "waga": 0.5,
+      "opis": "Niebieska mikstura przywracająca energię magiczną."
+    },
+    "mikstura_sily": {
+      "nazwa": "Mikstura Siły",
+      "typ": "mikstura",
+      "efekt": "bonus_sila",
+      "moc": 2,
+      "czas_trwania": 10,
+      "wartosc": 100,
+      "waga": 0.5,
+      "opis": "Zwiększa siłę na krótki czas."
+    },
+    "antidotum": {
+      "nazwa": "Antidotum",
+      "typ": "mikstura",
+      "efekt": "usun_truciznę",
+      "wartosc": 75,
+      "waga": 0.5,
+      "opis": "Neutralizuje trucizny i zatrucia."
+    }
+  },
+  "narzedzia": {
+    "zestaw_wlamywacza": {
+      "nazwa": "Zestaw Włamywacza",
+      "typ": "narzedzia",
+      "bonus": 2,
+      "umiejetnosc": "otwieranie_zamków",
+      "wartosc": 25,
+      "waga": 1,
+      "opis": "Zestaw wytrychów do otwierania zamków."
+    },
+    "symbol_swiety": {
+      "nazwa": "Święty Symbol",
+      "typ": "narzedzia",
+      "bonus_magiczny": 1,
+      "wartosc": 50,
+      "waga": 1,
+      "opis": "Symbol bóstwa, kanalizujący boską moc."
+    },
+    "ksiega_zakleć": {
+      "nazwa": "Księga Zaklęć",
+      "typ": "narzedzia",
+      "wartosc": 100,
+      "waga": 3,
+      "opis": "Księga zawierająca tajemną wiedzę magiczną."
+    }
+  },
+  "skarby": {
+    "zloto": {
+      "nazwa": "Złoto",
+      "typ": "waluta",
+      "wartosc": 1,
+      "waga": 0.02,
+      "opis": "Złote monety - uniwersalna waluta."
+    },
+    "klejnot": {
+      "nazwa": "Klejnot",
+      "typ": "skarb",
+      "wartosc": 100,
+      "waga": 0.1,
+      "opis": "Błyszczący klejnot o dużej wartości."
+    },
+    "pradawny_amulet": {
+      "nazwa": "Pradawny Amulet",
+      "typ": "amulet",
+      "bonus_wszystkie_atrybuty": 1,
+      "magiczny": true,
+      "wartosc": 2000,
+      "waga": 0.5,
+      "opis": "Tajemniczy amulet emanujący mocą. Wzmacnia wszystkie atrybuty."
+    }
+  },
+  "questowe": {
+    "pieczec_krola": {
+      "nazwa": "Pieczęć Króla",
+      "typ": "questowy",
+      "wartosc": 0,
+      "waga": 0.1,
+      "opis": "Królewska pieczęć - dowód zaufania monarchy."
+    },
+    "mapa_skarbow": {
+      "nazwa": "Mapa Skarbów",
+      "typ": "questowy",
+      "wartosc": 0,
+      "waga": 0.1,
+      "opis": "Stara mapa prowadząca do ukrytego skarbu."
+    }
+  }
+}

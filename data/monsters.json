@@ -1,0 +1,284 @@
+{
+  "potwory": {
+    "goblin": {
+      "nazwa": "Goblin",
+      "poziom": 1,
+      "typ": "humanoid",
+      "zdrowie": 7,
+      "klasa_pancerza": 13,
+      "atrybuty": {
+        "sila": 8,
+        "zrecznosc": 14,
+        "kondycja": 10,
+        "inteligencja": 10,
+        "madrosc": 8,
+        "charyzma": 8
+      },
+      "atak": {
+        "nazwa": "Scimitar",
+        "bonus": 4,
+        "obrazenia": "1d6+2"
+      },
+      "doswiadczenie": 50,
+      "lup": ["zloto:5-15", "sztylet:20%"],
+      "opis": "Mały, zielonoskóry humanoid o czerwonych oczach i ostrych zębach."
+    },
+    "wilk": {
+      "nazwa": "Wilk",
+      "poziom": 1,
+      "typ": "zwierze",
+      "zdrowie": 11,
+      "klasa_pancerza": 13,
+      "atrybuty": {
+        "sila": 12,
+        "zrecznosc": 15,
+        "kondycja": 12,
+        "inteligencja": 3,
+        "madrosc": 12,
+        "charyzma": 6
+      },
+      "atak": {
+        "nazwa": "Ugryzie",
+        "bonus": 4,
+        "obrazenia": "2d4+2"
+      },
+      "specjalne": {
+        "atak_w_grupie": "Przewaga gdy atakuje z innym wilkiem"
+      },
+      "doswiadczenie": 50,
+      "lup": ["zloto:2-8"],
+      "opis": "Dziki wilk z szarą sierścią i przenikliwymi żółtymi oczami."
+    },
+    "szkielet": {
+      "nazwa": "Szkielet",
+      "poziom": 1,
+      "typ": "nieumarły",
+      "zdrowie": 13,
+      "klasa_pancerza": 13,
+      "atrybuty": {
+        "sila": 10,
+        "zrecznosc": 14,
+        "kondycja": 15,
+        "inteligencja": 6,
+        "madrosc": 8,
+        "charyzma": 5
+      },
+      "atak": {
+        "nazwa": "Krótki miecz",
+        "bonus": 4,
+        "obrazenia": "1d6+2"
+      },
+      "odpornosci": ["trucizna"],
+      "slabosci": ["obuchowa"],
+      "doswiadczenie": 50,
+      "lup": ["zloto:3-10", "kosciany_pyl:50%"],
+      "opis": "Ożywione kości trzymające stary miecz."
+    },
+    "ork": {
+      "nazwa": "Ork",
+      "poziom": 2,
+      "typ": "humanoid",
+      "zdrowie": 15,
+      "klasa_pancerza": 13,
+      "atrybuty": {
+        "sila": 16,
+        "zrecznosc": 12,
+        "kondycja": 16,
+        "inteligencja": 7,
+        "madrosc": 11,
+        "charyzma": 10
+      },
+      "atak": {
+        "nazwa": "Topór",
+        "bonus": 5,
+        "obrazenia": "1d12+3"
+      },
+      "doswiadczenie": 100,
+      "lup": ["zloto:10-30", "topor_bojowy:15%"],
+      "opis": "Potężny, zielonoskóry wojownik z ostrymi kłami."
+    },
+    "ogr": {
+      "nazwa": "Ogr",
+      "poziom": 3,
+      "typ": "olbrzym",
+      "zdrowie": 59,
+      "klasa_pancerza": 11,
+      "atrybuty": {
+        "sila": 19,
+        "zrecznosc": 8,
+        "kondycja": 16,
+        "inteligencja": 5,
+        "madrosc": 7,
+        "charyzma": 7
+      },
+      "atak": {
+        "nazwa": "Wielki miecz",
+        "bonus": 6,
+        "obrazenia": "2d6+4"
+      },
+      "doswiadczenie": 450,
+      "lup": ["zloto:50-150", "miecz_dlugi:30%"],
+      "opis": "Ogromny humanoid o wielkich mięśniach i małej inteligencji."
+    },
+    "troll": {
+      "nazwa": "Troll",
+      "poziom": 4,
+      "typ": "olbrzym",
+      "zdrowie": 84,
+      "klasa_pancerza": 15,
+      "atrybuty": {
+        "sila": 18,
+        "zrecznosc": 13,
+        "kondycja": 20,
+        "inteligencja": 7,
+        "madrosc": 9,
+        "charyzma": 7
+      },
+      "atak": {
+        "nazwa": "Pazury",
+        "bonus": 7,
+        "obrazenia": "2d6+4",
+        "wielokrotny": 2
+      },
+      "specjalne": {
+        "regeneracja": "Odzyskuje 10 HP na turę (zatrzymana przez ogień/kwas)"
+      },
+      "slabosci": ["ogien", "kwas"],
+      "doswiadczenie": 1800,
+      "lup": ["zloto:100-300", "klejnot:40%"],
+      "opis": "Potężne stworzenie o niesamowitej regeneracji. Brudna zieleń skóry pokryta bliznami."
+    },
+    "kultista": {
+      "nazwa": "Kultista",
+      "poziom": 2,
+      "typ": "humanoid",
+      "zdrowie": 22,
+      "klasa_pancerza": 12,
+      "atrybuty": {
+        "sila": 11,
+        "zrecznosc": 12,
+        "kondycja": 10,
+        "inteligencja": 10,
+        "madrosc": 11,
+        "charyzma": 10
+      },
+      "atak": {
+        "nazwa": "Scimitar",
+        "bonus": 3,
+        "obrazenia": "1d6+1"
+      },
+      "zaklecia": ["mroczny_pocisk"],
+      "doswiadczenie": 150,
+      "lup": ["zloto:15-40", "symbol_mrocznego_boga:30%"],
+      "opis": "Członek mrocznego kultu w kapturze."
+    },
+    "wampir": {
+      "nazwa": "Wampir",
+      "poziom": 5,
+      "typ": "nieumarły",
+      "zdrowie": 82,
+      "klasa_pancerza": 16,
+      "atrybuty": {
+        "sila": 18,
+        "zrecznosc": 18,
+        "kondycja": 18,
+        "inteligencja": 17,
+        "madrosc": 15,
+        "charyzma": 18
+      },
+      "atak": {
+        "nazwa": "Ugryzie (wysysa krew)",
+        "bonus": 9,
+        "obrazenia": "1d6+4",
+        "specjalny_efekt": "Leczy się za połowę zadanych obrażeń"
+      },
+      "specjalne": {
+        "regeneracja": "Odzyskuje 20 HP na turę",
+        "zmiana_formy": "Może się zamienić w nietoperza lub mgłę"
+      },
+      "odpornosci": ["nie-magiczne_ataki"],
+      "slabosci": ["swiate_światło", "święcona_woda"],
+      "doswiadczenie": 5000,
+      "lup": ["zloto:500-1500", "pradawny_amulet:10%", "klejnot:80%"],
+      "opis": "Możny wampir, lord nocy. Blade, alabastrowe oblicze i przenikliwy czerwony wzrok."
+    },
+    "smok": {
+      "nazwa": "Młody Czerwony Smok",
+      "poziom": 6,
+      "typ": "smok",
+      "zdrowie": 178,
+      "klasa_pancerza": 18,
+      "atrybuty": {
+        "sila": 23,
+        "zrecznosc": 10,
+        "kondycja": 21,
+        "inteligencja": 14,
+        "madrosc": 11,
+        "charyzma": 19
+      },
+      "atak": {
+        "nazwa": "Ugryzie",
+        "bonus": 10,
+        "obrazenia": "2d10+6"
+      },
+      "atak_specjalny": {
+        "nazwa": "Ognisty oddech",
+        "obrazenia": "16d6",
+        "typ": "ogien",
+        "zasieg": "obszar",
+        "test_obronny": "zrecznosc"
+      },
+      "odpornosci": ["ogien"],
+      "doswiadczenie": 10000,
+      "lup": ["zloto:1000-3000", "klejnot:100%", "magiczna_bron:50%"],
+      "opis": "Majestatyczny młody smok o czerwonych łuskach jak roztopiona lawa. Każdy oddech wypełnia powietrze żarem."
+    }
+  },
+  "bossowie": {
+    "mroczny_czarnoksieznik": {
+      "nazwa": "Mroczny Czarnoksiężnik Malthor",
+      "poziom": 5,
+      "typ": "humanoid",
+      "boss": true,
+      "zdrowie": 120,
+      "klasa_pancerza": 15,
+      "atrybuty": {
+        "sila": 10,
+        "zrecznosc": 14,
+        "kondycja": 16,
+        "inteligencja": 20,
+        "madrosc": 15,
+        "charyzma": 16
+      },
+      "atak": {
+        "nazwa": "Laska Mocy",
+        "bonus": 8,
+        "obrazenia": "1d6+4"
+      },
+      "zaklecia": [
+        "kula_ognia",
+        "lodowy_szturm",
+        "magiczny_pocisk",
+        "teleportacja",
+        "lańcuch_błyskawic"
+      ],
+      "fazy": {
+        "1": {
+          "hp_prog": 120,
+          "taktyka": "Używa mocnych pojedynczych zaklęć"
+        },
+        "2": {
+          "hp_prog": 60,
+          "taktyka": "Przywołuje szkielety, używa obszarowych zaklęć"
+        },
+        "3": {
+          "hp_prog": 30,
+          "taktyka": "Desperackie ostateczne zaklęcie"
+        }
+      },
+      "doswiadczenie": 8000,
+      "lup": ["zloto:1000-2000", "laska_mocy:100%", "ksiega_zakleć:100%", "klejnot:100%"],
+      "opis": "Pradawny czarnoksiężnik spowity w ciemne szaty. Jego oczy płoną nienaturalnym fioletowym blaskiem."
+    }
+  }
+}
