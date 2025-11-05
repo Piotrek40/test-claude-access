@@ -842,3 +842,148 @@ class World:
                     print(f"✓ {quest_data['nazwa']}")
 
         press_enter()
+
+    def show_talent_tree(self, player):
+        """
+        Wyświetla drzewo talentów i pozwala wybrać talent.
+
+        Args:
+            player: Postać gracza
+        """
+        import json
+
+        # Wczytaj talenty
+        with open('data/talents.json', 'r', encoding='utf-8') as f:
+            talents_data = json.load(f)
+
+        class_talents = talents_data[player.character_class]
+
+        while True:
+            print_header(f"TALENTY - {player.character_class.upper()}")
+            print(f"Dostępne punkty: {colored_text(str(player.talent_points), 'yellow')}")
+            print_separator()
+
+            # Wyświetl 3 ścieżki
+            trees = list(class_talents.keys())
+
+            print("\nWybierz ścieżkę talentów:")
+            for i, tree_id in enumerate(trees, 1):
+                tree = class_talents[tree_id]
+                learned_in_tree = sum(1 for t_id in tree['talenty'].keys() if player.has_talent(t_id))
+                print(f"  {i}. {tree['nazwa']} ({learned_in_tree}/5 talentów)")
+                print(f"     {tree['opis']}")
+
+            print(f"  0. Wróć")
+
+            try:
+                choice = int(input("\nWybór: ").strip())
+                if choice == 0:
+                    break
+                if 1 <= choice <= len(trees):
+                    tree_id = trees[choice - 1]
+                    self.show_talent_tree_detail(player, class_talents[tree_id], tree_id)
+                else:
+                    print_error("Nieprawidłowy wybór!")
+                    press_enter()
+            except ValueError:
+                print_error("Wprowadź poprawną liczbę!")
+                press_enter()
+            except KeyboardInterrupt:
+                break
+
+    def show_talent_tree_detail(self, player, tree_data, tree_id):
+        """
+        Pokazuje szczegóły konkretnej ścieżki talentów.
+
+        Args:
+            player: Postać gracza
+            tree_data: Dane ścieżki
+            tree_id: ID ścieżki
+        """
+        while True:
+            print_header(f"{tree_data['nazwa']}")
+            print(tree_data['opis'])
+            print_separator()
+            print(f"Punkty talentów: {colored_text(str(player.talent_points), 'yellow')}")
+            print_separator()
+
+            # Wyświetl talenty (1-5)
+            talents_list = []
+            for i in range(1, 6):
+                talent_id = f"{tree_id}_{i}"
+                if talent_id in tree_data['talenty']:
+                    talent = tree_data['talenty'][talent_id]
+                    talents_list.append((talent_id, talent))
+
+            for i, (talent_id, talent) in enumerate(talents_list, 1):
+                # Status talentu
+                if player.has_talent(talent_id):
+                    status = colored_text("✓ WYUCZONY", 'green')
+                else:
+                    can_learn, reason = player.can_learn_talent(talent_id)
+                    if can_learn:
+                        status = colored_text("◯ DOSTĘPNY", 'yellow')
+                    else:
+                        status = colored_text("✗ ZABLOKOWANY", 'red')
+
+                # Typ talentu
+                typ_str = "PASYWNY" if talent['typ'] == 'pasywny' else colored_text("AKTYWNY", 'cyan')
+
+                print(f"\n{i}. [{typ_str}] {talent['nazwa']} {status}")
+                print(f"   {talent['opis']}")
+                print(f"   Wymagany poziom: {talent['wymagany_poziom_postaci']}")
+
+                # Wymagania
+                if 'wymaga' in talent:
+                    req_id = talent['wymaga']
+                    req_talent = tree_data['talenty'][req_id]
+                    req_status = "✓" if player.has_talent(req_id) else "✗"
+                    print(f"   Wymaga: {req_status} {req_talent['nazwa']}")
+
+                # Cooldown i koszt (dla aktywnych)
+                if talent['typ'] == 'aktywny':
+                    efekt = talent['efekt']
+                    if 'cooldown' in efekt:
+                        print(f"   Cooldown: {efekt['cooldown']} tur")
+                    if 'mana_cost' in efekt:
+                        print(f"   Koszt: {efekt['mana_cost']} many")
+
+            print(f"\n  0. Wróć")
+
+            try:
+                choice = int(input("\nWybierz talent aby go nauczyć (lub 0): ").strip())
+                if choice == 0:
+                    break
+                if 1 <= choice <= len(talents_list):
+                    talent_id, talent = talents_list[choice - 1]
+
+                    # Próba nauki
+                    if player.has_talent(talent_id):
+                        print_warning("Już znasz ten talent!")
+                        press_enter()
+                    else:
+                        can_learn, reason = player.can_learn_talent(talent_id)
+                        if can_learn:
+                            # Potwierdź
+                            print_separator()
+                            print(f"Czy chcesz nauczyć się: {colored_text(talent['nazwa'], 'yellow')}?")
+                            print(f"{talent['opis']}")
+                            if input("\nPotwierdź (t/n): ").lower() in ['t', 'tak']:
+                                success, message = player.learn_talent(talent_id)
+                                if success:
+                                    print_success(f"\n{message}")
+                                    press_enter()
+                                else:
+                                    print_error(f"\n{message}")
+                                    press_enter()
+                        else:
+                            print_error(f"Nie możesz się tego nauczyć: {reason}")
+                            press_enter()
+                else:
+                    print_error("Nieprawidłowy wybór!")
+                    press_enter()
+            except ValueError:
+                print_error("Wprowadź poprawną liczbę!")
+                press_enter()
+            except KeyboardInterrupt:
+                break
