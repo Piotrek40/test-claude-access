@@ -1,0 +1,84 @@
+{
+  "classes": {
+    "wojownik": {
+      "nazwa": "Wojownik",
+      "opis": "Mistrz broni i zbroi, specjalista od walki wręcz. Wojownicy to najlepsi w bezpośrednim starciu.",
+      "kostka_zdrowia": 10,
+      "glowny_atrybut": "sila",
+      "umiejetnosci": ["atletyka", "zastraszanie", "percepcja"],
+      "ekwipunek_startowy": ["miecz_dlugi", "tarcza", "zbroja_kolcza", "mikstura_leczenia"],
+      "punkty_umiejetnosci": 2,
+      "bonusy_na_poziom": {
+        "1": {"zdrowię": 10, "atak": 2},
+        "2": {"zdrowię": 6, "atak": 1},
+        "3": {"zdrowię": 6, "atak": 1, "specjalne": "drugi_atak"},
+        "4": {"zdrowię": 6, "atak": 1},
+        "5": {"zdrowię": 6, "atak": 2, "specjalne": "krytyk_ulepszone"}
+      }
+    },
+    "mag": {
+      "nazwa": "Mag",
+      "opis": "Władca arkańskiej magii. Magowie są słabi fizycznie, ale potrafią rzucać niszczycielskie zaklęcia.",
+      "kostka_zdrowia": 6,
+      "glowny_atrybut": "inteligencja",
+      "umiejetnosci": ["arkana", "historia", "sledztwo"],
+      "ekwipunek_startowy": ["rozdzka", "szaty_maga", "ksiega_zakleć", "mikstura_many"],
+      "punkty_umiejetnosci": 4,
+      "zaklecia_startowe": ["magiczny_pocisk", "tarcza", "spalajaca_dlonie"],
+      "sloty_zakleć": {
+        "1": {"poziom_1": 2},
+        "2": {"poziom_1": 3},
+        "3": {"poziom_1": 4, "poziom_2": 2},
+        "4": {"poziom_1": 4, "poziom_2": 3},
+        "5": {"poziom_1": 4, "poziom_2": 3, "poziom_3": 2}
+      },
+      "bonusy_na_poziom": {
+        "1": {"zdrowię": 6, "mana": 15},
+        "2": {"zdrowię": 4, "mana": 10},
+        "3": {"zdrowię": 4, "mana": 10},
+        "4": {"zdrowię": 4, "mana": 15},
+        "5": {"zdrowię": 4, "mana": 15}
+      }
+    },
+    "lotr": {
+      "nazwa": "Łotr",
+      "opis": "Ekspert od skradania się, pułapek i ataków z zaskoczenia. Łotry to wszechstronne postacie.",
+      "kostka_zdrowia": 8,
+      "glowny_atrybut": "zrecznosc",
+      "umiejetnosci": ["skradanie", "otwieranie_zamków", "percepcja", "akrobatyka"],
+      "ekwipunek_startowy": ["sztylet", "kusza_lekka", "skorzana_zbroja", "zestaw_wlamywacza"],
+      "punkty_umiejetnosci": 6,
+      "bonusy_na_poziom": {
+        "1": {"zdrowię": 8, "atak": 1, "specjalne": "atak_z_zaskoczenia"},
+        "2": {"zdrowię": 5, "atak": 1},
+        "3": {"zdrowię": 5, "atak": 1, "specjalne": "unik"},
+        "4": {"zdrowię": 5, "atak": 2},
+        "5": {"zdrowię": 5, "atak": 1, "specjalne": "podwojne_obrazenia"}
+      }
+    },
+    "kleryk": {
+      "nazwa": "Kleryk",
+      "opis": "Kapłan bogów, łączący moc boską z umiejętnościami bojowymi. Klerykowie leczą i wspierają.",
+      "kostka_zdrowia": 8,
+      "glowny_atrybut": "madrosc",
+      "umiejetnosci": ["medycyna", "religia", "przekonywanie"],
+      "ekwipunek_startowy": ["buzdygan", "tarcza", "kolczuga", "symbol_swiety"],
+      "punkty_umiejetnosci": 3,
+      "zaklecia_startowe": ["leczenie_ran", "swiety_blask", "blogoslawienstwo"],
+      "sloty_zakleć": {
+        "1": {"poziom_1": 2},
+        "2": {"poziom_1": 3},
+        "3": {"poziom_1": 4, "poziom_2": 2},
+        "4": {"poziom_1": 4, "poziom_2": 3},
+        "5": {"poziom_1": 4, "poziom_2": 3, "poziom_3": 1}
+      },
+      "bonusy_na_poziom": {
+        "1": {"zdrowię": 8, "mana": 10, "atak": 1},
+        "2": {"zdrowię": 5, "mana": 8, "atak": 1},
+        "3": {"zdrowię": 5, "mana": 8},
+        "4": {"zdrowię": 5, "mana": 10, "atak": 1},
+        "5": {"zdrowię": 5, "mana": 10, "specjalne": "zmartwychwstanie"}
+      }
+    }
+  }
+}

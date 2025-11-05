@@ -1,0 +1,1 @@
+"""Główny silnik gry RPG."""

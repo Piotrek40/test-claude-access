@@ -1,0 +1,205 @@
+{
+  "questy": {
+    "main_quest": {
+      "nazwa": "Cień nad Zielonym Gajem",
+      "typ": "główny",
+      "opis": "Wioska jest nękana przez tajemnicze ataki. Musisz odkryć źródło zła i je powstrzymać.",
+      "zleceniodawca": "starosta",
+      "etapy": [
+        {
+          "id": 1,
+          "nazwa": "Zbadaj Ciemny Las",
+          "opis": "Starosta poprosił cię o zbadanie Ciemnego Lasu. Gobliniy zaczynają napadać na wieś.",
+          "cel": "odwiedz_lokacje:ciemny_las",
+          "nagroda_xp": 100,
+          "kolejny_etap": 2
+        },
+        {
+          "id": 2,
+          "nazwa": "Odkryj Zrujnowaną Wieżę",
+          "opis": "W lesie natknąłeś się na stare ślady prowadzące na północ. Być może to związane z atakami?",
+          "cel": "odwiedz_lokacje:ciemny_las.stara_wieza",
+          "nagroda_xp": 200,
+          "kolejny_etap": 3
+        },
+        {
+          "id": 3,
+          "nazwa": "Podążaj do Ruin Zamku",
+          "opis": "W wieży znalazłeś symbol mrocznego kultu. Ślady prowadzą dalej na północ, do ruin starego zamku.",
+          "cel": "odwiedz_lokacje:ruiny_zamku",
+          "nagroda_xp": 300,
+          "kolejny_etap": 4
+        },
+        {
+          "id": 4,
+          "nazwa": "Powstrzymaj Mrocznego Czarnoksiężnika",
+          "opis": "W ruinach zamku kultyści odprawiają mroczny rytuał. Musisz pokonać ich przywódcę - Mrocznego Czarnoksiężnika Malthora!",
+          "cel": "pokonaj:mroczny_czarnoksieznik",
+          "nagroda_xp": 2000,
+          "nagroda_zloto": 500,
+          "nagroda_przedmioty": ["pieczec_krola"],
+          "kolejny_etap": 5
+        },
+        {
+          "id": 5,
+          "nazwa": "Wróć do Starosty",
+          "opis": "Pokonałeś Mrocznego Czarnoksiężnika! Wróć do Starosty i poinformuj go o zwycięstwie.",
+          "cel": "porozmawiaj:starosta",
+          "nagroda_xp": 500,
+          "nagroda_zloto": 1000,
+          "nagroda_przedmioty": ["miecz_elficki"],
+          "koniec": true
+        }
+      ]
+    },
+    "goblin_problem": {
+      "nazwa": "Problem z Goblinami",
+      "typ": "poboczny",
+      "opis": "Handlarz prosi o pomoc. Gobliniy ukradły jego towar.",
+      "zleceniodawca": "handlarz",
+      "wymagania": {
+        "min_poziom": 1
+      },
+      "etapy": [
+        {
+          "id": 1,
+          "nazwa": "Pokonaj Gobliny",
+          "opis": "Pokonaj 5 goblinów w Ciemnym Lesie.",
+          "cel": "zabij:goblin:5",
+          "nagroda_xp": 250,
+          "nagroda_zloto": 100
+        }
+      ]
+    },
+    "tajemnica_kopalni": {
+      "nazwa": "Tajemnica Opuszczonej Kopalni",
+      "typ": "poboczny",
+      "opis": "Kowal opowiada o starej kopalni, gdzie podobno jest wielki skarb. Ale strzegą go niebezpieczne stwory.",
+      "zleceniodawca": "kowal",
+      "wymagania": {
+        "min_poziom": 2
+      },
+      "etapy": [
+        {
+          "id": 1,
+          "nazwa": "Eksploruj Kopalnię",
+          "opis": "Zbadaj Opuszczoną Kopalnię i pokonaj strażnika skarbu.",
+          "cel": "pokonaj:troll",
+          "nagroda_xp": 1000,
+          "nagroda_zloto": 300,
+          "nagroda_przedmioty": ["mapa_skarbow"]
+        }
+      ]
+    },
+    "smocza_zagadka": {
+      "nazwa": "Smocza Zagadka",
+      "typ": "legendarny",
+      "opis": "Legendy mówią o potężnym smoku mieszkającym w górach. Tylko najodważniejsi śmią się z nim zmierzyć.",
+      "wymagania": {
+        "min_poziom": 6,
+        "wymagany_przedmiot": "mapa_skarbow"
+      },
+      "etapy": [
+        {
+          "id": 1,
+          "nazwa": "Zmierz się ze Smokiem",
+          "opis": "Wejdź do smoczej jaskini i zmierz się z Młodym Czerwonym Smokiem.",
+          "cel": "pokonaj:smok",
+          "nagroda_xp": 5000,
+          "nagroda_zloto": 2500,
+          "nagroda_przedmioty": ["pradawny_amulet"]
+        }
+      ]
+    },
+    "polowanie_na_wampira": {
+      "nazwa": "Polowanie na Wampira",
+      "typ": "poboczny",
+      "opis": "W podzemiach Zamku Czarnego Wawrzynu mieszka potężny wampir. Ktoś musi go powstrzymać.",
+      "wymagania": {
+        "min_poziom": 5,
+        "zaliczony_quest": "main_quest"
+      },
+      "etapy": [
+        {
+          "id": 1,
+          "nazwa": "Pokonaj Wampira",
+          "opis": "Zbadaj podziemia zamku i pokonaj wampira.",
+          "cel": "pokonaj:wampir",
+          "nagroda_xp": 3000,
+          "nagroda_zloto": 800,
+          "nagroda_przedmioty": ["pradawny_amulet"]
+        }
+      ]
+    }
+  },
+  "wydarzenia_losowe": {
+    "znajdziony_skarb": {
+      "nazwa": "Znaleziony Skarb",
+      "opis": "Potknąłeś się o coś na ścieżce. To stara skrzynia!",
+      "szansa": 15,
+      "nagroda": {
+        "zloto": "50-150",
+        "przedmioty": ["mikstura_leczenia:50%", "klejnot:20%"]
+      }
+    },
+    "wędrowny_kupiec": {
+      "nazwa": "Wędrowny Kupiec",
+      "opis": "Spotykasz wędrownego kupca. Oferuje swoje towary.",
+      "szansa": 10,
+      "handel": true,
+      "asortyment": ["mikstura_leczenia", "mikstura_many", "mikstura_sily"]
+    },
+    "pułapka": {
+      "nazwa": "Pułapka!",
+      "opis": "Nie zauważyłeś pułapki! Strzała wystrzeliła z ukrycia!",
+      "szansa": 10,
+      "test": {
+        "typ": "zrecznosc",
+        "trudnosc": 14,
+        "sukces": "Zwinnie uchylasz się przed strzałą!",
+        "porazka": "Strzała trafia cię! Tracisz 2d6 HP"
+      }
+    },
+    "tajemniczy_wędrowiec": {
+      "nazwa": "Tajemniczy Wędrowiec",
+      "opis": "Spotykasz zamaskowanego wędrowca. Oferuje ci dziwną miksturę.",
+      "szansa": 5,
+      "wybor": {
+        "opcja_1": {
+          "tekst": "Wypij miksturę",
+          "efekt": "losowy_bonus",
+          "możliwe_efekty": [
+            {"typ": "leczenie", "moc": "4d8+4", "szansa": 40},
+            {"typ": "bonus_atrybut", "atrybut": "losowy", "moc": 2, "czas": 20, "szansa": 30},
+            {"typ": "obrazenia", "moc": "2d6", "szansa": 20},
+            {"typ": "trucizna", "czas": 5, "szansa": 10}
+          ]
+        },
+        "opcja_2": {
+          "tekst": "Odmów i idź dalej",
+          "efekt": "brak"
+        }
+      }
+    }
+  },
+  "intro": {
+    "tekst": [
+      "=================================================================",
+      "           KRONIKI ZAPOMNIANEGO KRÓLESTWA",
+      "           Tekstowa Gra RPG",
+      "=================================================================",
+      "",
+      "Jesteś wędrownym poszukiwaczem przygód w krainie Valderii.",
+      "Twoja podróż przywiodła cię do spokojnej wioski Zielony Gaj,",
+      "położonej u podnóża mglistych gór.",
+      "",
+      "Jednak spokój wioski okazuje się pozorny...",
+      "Miejscowi szepcą o dziwnych wydarzeniach w okolicznym lesie,",
+      "o znikających ludziach i mrocznych kultystach.",
+      "",
+      "Czy uda ci się odkryć prawdę i ocalić wioskę?",
+      "Twoja przygoda właśnie się rozpoczyna...",
+      ""
+    ]
+  }
+}

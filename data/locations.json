@@ -1,0 +1,239 @@
+{
+  "lokacje": {
+    "startowa_wioska": {
+      "nazwa": "Wioska Zielony Gaj",
+      "typ": "osada",
+      "opis": "Spokojna wioska u podnóża gór. Widać stare domy kryte strzechą i centralny plac targowy. W powietrzu unosi się zapach świeżo upieczonego chleba.",
+      "npc": ["starosta", "kowal", "karczma_wlasciciel"],
+      "miejsca": {
+        "plac_targowy": {
+          "nazwa": "Plac Targowy",
+          "opis": "Centralny plac wioski. Kilku handlarzy sprzedaje swoje towary.",
+          "akcje": ["handel", "rozmowa"],
+          "npc": ["handlarz"]
+        },
+        "karczma": {
+          "nazwa": "Karczma 'Złoty Smok'",
+          "opis": "Ciepła i przytulna karczma. Przy barze siedzą miejscowi, a z kominka płonie wesoły ogień.",
+          "akcje": ["odpoczynek", "rozmowa", "jedzenie"],
+          "npc": ["karczma_wlasciciel", "pijany_wojownik"],
+          "odpoczynek_koszt": 5
+        },
+        "kuznia": {
+          "nazwa": "Kuźnia",
+          "opis": "Gorące powietrze uderza w twarz. Kowal pracuje przy ogniu.",
+          "akcje": ["handel", "naprawa_ekwipunku"],
+          "npc": ["kowal"]
+        },
+        "dom_starosty": {
+          "nazwa": "Dom Starosty",
+          "opis": "Największy budynek w wiosce. Siedziba lokalnego przywódcy.",
+          "akcje": ["rozmowa", "quest"],
+          "npc": ["starosta"]
+        }
+      },
+      "wyjscia": {
+        "polnoc": "ciemny_las",
+        "wschod": "gorska_sciezka"
+      }
+    },
+    "ciemny_las": {
+      "nazwa": "Ciemny Las",
+      "typ": "dzicz",
+      "opis": "Gęsty, mroczny las. Światło słońca z trudem przebija się przez korony drzew. Słychać dziwne odgłosy.",
+      "niebezpieczenstwo": "wysokie",
+      "losowe_spotkania": [
+        {"potwar": "wilk", "szansa": 30},
+        {"potwar": "goblin", "szansa": 25},
+        {"wydarzenie": "znajdziony_skarb", "szansa": 10}
+      ],
+      "miejsca": {
+        "polana": {
+          "nazwa": "Leśna Polana",
+          "opis": "Mała polana pośrodku lasu. Bezpieczne miejsce na odpoczynek.",
+          "akcje": ["odpoczynek", "obozowanie"],
+          "skarby": ["mikstura_leczenia:30%"]
+        },
+        "stara_wieza": {
+          "nazwa": "Zrujnowana Wieża",
+          "opis": "Stara, zapomniana wieża. Kiedyś chroniła las, teraz jest opuszczona.",
+          "akcje": ["eksploracja"],
+          "skarby": ["zloto:50-150", "klejnot:20%"],
+          "potwory": ["szkielet", "szkielet"]
+        }
+      },
+      "wyjscia": {
+        "poludnie": "startowa_wioska",
+        "polnoc": "ruiny_zamku"
+      }
+    },
+    "gorska_sciezka": {
+      "nazwa": "Górska Ścieżka",
+      "typ": "dzicz",
+      "opis": "Wąska ścieżka prowadząca w góry. Z jednej strony skalista ściana, z drugiej przepaść.",
+      "niebezpieczenstwo": "średnie",
+      "wymaga_test": {
+        "typ": "atletyka",
+        "trudnosc": 12,
+        "sukces": "Bezpiecznie pokonujesz trudny odcinek",
+        "porazka": "Ślizgasz się! Tracisz 1d6 HP"
+      },
+      "losowe_spotkania": [
+        {"potwar": "ork", "szansa": 20},
+        {"potwar": "ogr", "szansa": 10}
+      ],
+      "wyjscia": {
+        "zachod": "startowa_wioska",
+        "wschod": "kopalnia"
+      }
+    },
+    "kopalnia": {
+      "nazwa": "Opuszczona Kopalnia",
+      "typ": "dungeon",
+      "opis": "Stara kopalnia, dawno temu porzucona przez górników. Mówią, że coś złowrogiego się tu osiedliło.",
+      "niebezpieczenstwo": "bardzo_wysokie",
+      "miejsca": {
+        "wejscie": {
+          "nazwa": "Wejście do Kopalni",
+          "opis": "Ciemne wejście do kopalni. Zimne powietrze wydobywa się z wnętrza.",
+          "akcje": ["wejdz"],
+          "potwory": ["goblin", "goblin"]
+        },
+        "glowny_korytarz": {
+          "nazwa": "Główny Korytarz",
+          "opis": "Długi korytarz wydrążony w skale. Dawne tory wagoników dawno zardzewiałe.",
+          "akcje": ["eksploracja"],
+          "potwory": ["ork", "ork"],
+          "skarby": ["zloto:30-80"]
+        },
+        "komnata_bossa": {
+          "nazwa": "Głęboka Komnata",
+          "opis": "Ogromna komnata w sercu kopalni. W centrum stoi potężny troll.",
+          "akcje": ["walka"],
+          "boss": "troll",
+          "skarby": ["zloto:200-500", "klejnot:100%", "miecz_elficki:50%"]
+        }
+      },
+      "wyjscia": {
+        "zachod": "gorska_sciezka"
+      }
+    },
+    "ruiny_zamku": {
+      "nazwa": "Ruiny Zamku Czarnego Wawrzynu",
+      "typ": "dungeon",
+      "opis": "Majestatyczne ruiny pradawnego zamku. Niegdyś potężna forteca, teraz siedlisko ciemności.",
+      "niebezpieczenstwo": "skrajne",
+      "miejsca": {
+        "dziedziniec": {
+          "nazwa": "Dziedziniec",
+          "opis": "Rozległy dziedziniec porośnięty chwastami. Połamane posągi patrzą pustymi oczami.",
+          "akcje": ["eksploracja"],
+          "potwory": ["szkielet", "szkielet", "szkielet"]
+        },
+        "wielka_sala": {
+          "nazwa": "Wielka Sala",
+          "opis": "Dawna sala tronowa. Pordzewiałe zbroje wiszą na ścianach.",
+          "akcje": ["eksploracja"],
+          "potwory": ["kultista", "kultista"],
+          "skarby": ["zloto:100-300"]
+        },
+        "komnata_rytualna": {
+          "nazwa": "Komnata Rytualna",
+          "opis": "Mroczna komnata pełna dziwnych symboli. W powietrzu wisi zapach siarki.",
+          "akcje": ["walka"],
+          "boss": "mroczny_czarnoksieznik",
+          "skarby": ["zloto:500-1500", "laska_mocy:100%", "pradawny_amulet:50%"]
+        },
+        "podziemia": {
+          "nazwa": "Podziemia Zamku",
+          "opis": "Ciemne lochy pod zamkiem. Słychać szepty i jęki.",
+          "akcje": ["eksploracja"],
+          "potwory": ["wampir"],
+          "skarby": ["zloto:300-800", "klejnot:80%"]
+        }
+      },
+      "wyjscia": {
+        "poludnie": "ciemny_las"
+      }
+    },
+    "gora_smoka": {
+      "nazwa": "Góra Ognistego Szczytu",
+      "typ": "dungeon",
+      "opis": "Najwyższa góra w okolicy. W jej wnętrzu, w jaskini pełnej lawy, mieszka pradawny smok.",
+      "niebezpieczenstwo": "legendarnie_niebezpieczne",
+      "wymagany_poziom": 6,
+      "miejsca": {
+        "wejscie_do_jaskini": {
+          "nazwa": "Wejście do Smoczej Jaskini",
+          "opis": "Ogromne wejście do jaskini. Temperatura gwałtownie rośnie.",
+          "akcje": ["wejdz"]
+        },
+        "komnata_skarbow": {
+          "nazwa": "Komnata Skarbów",
+          "opis": "Jaskinia wypełniona górami złota i klejnotów. To legowisko smoka.",
+          "akcje": ["walka"],
+          "boss": "smok",
+          "skarby": ["zloto:2000-5000", "klejnot:100%", "klejnot:100%", "pradawny_amulet:100%"]
+        }
+      }
+    }
+  },
+  "npc": {
+    "starosta": {
+      "nazwa": "Starosta Borivoj",
+      "opis": "Starszy mężczyzna z siwą brodą. Wygląda na zmartwionego.",
+      "lokacja": "startowa_wioska",
+      "quest": "main_quest",
+      "dialogi": {
+        "powitanie": "Witaj, wędrowcze! Dobrze, że przyszedłeś. Mamy poważny problem...",
+        "quest_start": "Gobliniy zaczynają nas nękać. Potrzebujemy kogoś dzielnego, kto sprawdzi co się dzieje w Ciemnym Lesie.",
+        "quest_progress": "Jak idą poszukiwania? Musisz odnaleźć źródło tego zła!",
+        "quest_complete": "Pokonałeś Mrocznego Czarnoksiężnika! Jesteś bohaterem! Oto twoja nagroda."
+      }
+    },
+    "kowal": {
+      "nazwa": "Kowal Gromisław",
+      "opis": "Potężnie zbudowany mężczyzna z wielkimi ramionami. Cała jego skóra pokryta jest sadzą.",
+      "lokacja": "startowa_wioska",
+      "handel": true,
+      "asortyment": ["miecz_dlugi", "topor_bojowy", "zbroja_kolcza", "kolczuga", "tarcza"],
+      "naprawa": true,
+      "dialogi": {
+        "powitanie": "Co cię sprowadza do mojej kuźni?",
+        "handel": "Mam najlepszą broń w okolicy. Chcesz coś kupić?",
+        "naprawa": "Twój ekwipunek wygląda na zniszczony. Mogę to naprawić za niewielką opłatę."
+      }
+    },
+    "handlarz": {
+      "nazwa": "Handlarz Świrad",
+      "opis": "Wysoki człowiek w podróżnym stroju. Ma sprytne oczy.",
+      "lokacja": "startowa_wioska",
+      "handel": true,
+      "asortyment": ["mikstura_leczenia", "mikstura_many", "antidotum", "mikstura_sily"],
+      "dialogi": {
+        "powitanie": "Witaj! Mam najlepsze mikstury w całej krainie!",
+        "handel": "Co cię interesuje? Wszystko najwyższej jakości!"
+      }
+    },
+    "karczma_wlasciciel": {
+      "nazwa": "Karczmarz Zbigniew",
+      "opis": "Pulchny mężczyzna z wesołym uśmiechem. Zawsze gotów do pogawędki.",
+      "lokacja": "startowa_wioska",
+      "uslugi": ["odpoczynek", "jedzenie"],
+      "dialogi": {
+        "powitanie": "Witaj w Złotym Smoku! Najlepszej karczmie w okolicy!",
+        "odpoczynek": "Pokój kosztuje 5 złotych. Śniadanie w cenie!",
+        "plotki": "Słyszałem, że w lesie coś się dzieje. Ludzie mówią o dziwnych kultystach..."
+      }
+    },
+    "pijany_wojownik": {
+      "nazwa": "Pijany Wojownik",
+      "opis": "Wojownik w pomięty zbroi. Wyraźnie wypił za dużo.",
+      "lokacja": "startowa_wioska",
+      "dialogi": {
+        "powitanie": "*hik* Cześć... przyjacielu... *hik*",
+        "rada": "Uważaj w lesie... *hik* ... tam są wilki... i gorsze rzeczy... *hik*"
+      }
+    }
+  }
+}
