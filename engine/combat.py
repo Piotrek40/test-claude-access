@@ -95,6 +95,22 @@ class CombatSystem:
         self.monster = monster
         self.turn = 1
 
+        # Bonusy z talentów
+        self.talent_bonuses = player.get_talent_bonuses()
+
+        # Licznik combo (dla talentu Mistrz Combo)
+        self.combo_hits = 0
+
+        # Efekty statusowe na potworze
+        self.monster_effects = {
+            'bleeding': 0,  # Tury krwawienia
+            'bleeding_damage': 0,  # Obrażenia za turę
+            'poisoned': 0,  # Tury trucizny
+            'poison_damage': 0,  # Obrażenia za turę
+            'weakened': 0,  # Tury osłabienia
+            'slowed': 0,  # Tury spowolnienia
+        }
+
     def start_combat(self):
         """
         Rozpoczyna walkę.
@@ -122,6 +138,10 @@ class CombatSystem:
         """Pojedyncza tura walki."""
         print_separator("=")
         print(f"TURA {self.turn}")
+
+        # Efekty na początku tury
+        self.start_of_turn_effects()
+
         print_combat_status(
             self.player.name, self.player.hp, self.player.max_hp,
             self.monster.name, self.monster.hp, self.monster.max_hp
@@ -139,6 +159,63 @@ class CombatSystem:
 
         press_enter()
 
+        # Aktualizuj cooldowny talentów
+        self.player.update_talent_cooldowns()
+
+    def start_of_turn_effects(self):
+        """Aplikuje efekty na początku tury."""
+        # Regeneracja bojowa z talentów
+        if self.talent_bonuses['combat_regen'] > 0:
+            heal = self.talent_bonuses['combat_regen']
+            self.player.heal(heal)
+            print_success(f"⚕ Regeneracja bojowa: +{heal} HP")
+
+        # Aura życia z talentów
+        if self.talent_bonuses['life_aura'] > 0:
+            heal = self.talent_bonuses['life_aura']
+            self.player.heal(heal)
+            print_success(f"✨ Aura życia: +{heal} HP")
+
+        # Obsługa aktywnych buffów gracza
+        buffs_to_remove = []
+        for buff_name, buff_data in self.player.talent_buffs.items():
+            if 'turns_left' in buff_data:
+                # Szał Bojowy - koszt HP
+                if buff_name == 'rage_mode':
+                    cost = buff_data.get('cost_per_turn', 5)
+                    self.player.take_damage(cost)
+                    print(colored_text(f"🔥 Szał Bojowy: -{cost} HP", 'red'))
+
+                # Zmniejsz licznik tur
+                buff_data['turns_left'] -= 1
+
+                # Informuj o wygasającym buffie
+                if buff_data['turns_left'] == 0:
+                    buffs_to_remove.append(buff_name)
+                    if buff_name == 'rage_mode':
+                        print_warning("🔥 Szał Bojowy wygasł!")
+                    elif buff_name == 'invisibility':
+                        print_warning("👻 Niewidzialność wygasła!")
+                    elif buff_name == 'shield':
+                        print_warning("🛡️ Tarcza ochronna wygasła!")
+
+        # Usuń wygasłe buffy
+        for buff_name in buffs_to_remove:
+            del self.player.talent_buffs[buff_name]
+
+        # Efekty DoT na potworze
+        if self.monster_effects['bleeding'] > 0:
+            dmg = self.monster_effects['bleeding_damage']
+            self.monster.take_damage(dmg)
+            print(colored_text(f"🩸 {self.monster.name} krwawi: -{dmg} HP", 'red'))
+            self.monster_effects['bleeding'] -= 1
+
+        if self.monster_effects['poisoned'] > 0:
+            dmg = self.monster_effects['poison_damage']
+            self.monster.take_damage(dmg)
+            print(colored_text(f"☠ {self.monster.name} jest zatruty: -{dmg} HP", 'green'))
+            self.monster_effects['poisoned'] -= 1
+
     def player_turn(self):
         """Tura gracza."""
         print(f"\n--- Twoja tura ---")
@@ -149,6 +226,11 @@ class CombatSystem:
         # Dodaj zaklęcia jeśli postać je ma
         if self.player.spells and hasattr(self.player, 'mana') and self.player.mana > 0:
             actions.insert(1, "Rzuć zaklęcie")
+
+        # Dodaj aktywne talenty
+        active_talents = self.player.get_active_talents()
+        if active_talents:
+            actions.insert(1, "Użyj umiejętności")
 
         print("\nCo chcesz zrobić?")
         for i, action in enumerate(actions, 1):
@@ -168,6 +250,8 @@ class CombatSystem:
 
         if action == "Atakuj":
             self.player_attack()
+        elif action == "Użyj umiejętności":
+            self.player_use_talent()
         elif action == "Rzuć zaklęcie":
             self.player_cast_spell()
         elif action == "Użyj mikstury":
@@ -178,30 +262,66 @@ class CombatSystem:
 
     def player_attack(self):
         """Gracz atakuje."""
+        import random
+
+        # Sprawdź bonus do ataku z talentów
+        attack_bonus_from_talents = self.talent_bonuses.get('attack_bonus', 0)
+
         # Rzut na trafienie
         attack_roll = d20()
-        total_attack = attack_roll + self.player.attack_bonus
+        total_attack = attack_roll + self.player.attack_bonus + attack_bonus_from_talents
 
-        print(f"\n🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} = {total_attack}")
+        if attack_bonus_from_talents > 0:
+            print(f"\n🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} + {attack_bonus_from_talents} (talent) = {total_attack}")
+        else:
+            print(f"\n🎲 Rzut na trafienie: {attack_roll} + {self.player.attack_bonus} = {total_attack}")
 
-        # Krytyk
-        if attack_roll == 20:
+        # Sprawdź bonus do szansy krytycznej z talentów
+        crit_chance_bonus = self.talent_bonuses.get('crit_chance', 0)
+        crit_threshold = 20 - (crit_chance_bonus // 5)  # Każde 5% = -1 do progu (np. 5% -> crit na 19-20)
+
+        # Krytyk (naturalny lub z bonusem)
+        is_crit = attack_roll == 20 or (attack_roll >= crit_threshold and crit_chance_bonus > 0)
+
+        if is_crit:
             print(colored_text("💥 KRYTYCZNE TRAFIENIE! 💥", 'yellow'))
             damage_roll = roll(self.player.get_weapon_damage())
             damage = damage_roll * 2
+
+            # Dodaj modyfikator siły/zręczności
+            if self.player.equipped['bron']:
+                attr = self.player.equipped['bron'].get('atrybut', 'sila')
+                damage += self.player.get_modifier(attr) * 2  # x2 na crit
+            else:
+                damage += self.player.get_modifier('sila') * 2
+
+            # Zastosuj bonus do obrażeń z talentów
+            damage = self.apply_damage_bonuses(damage)
+
             print(f"⚔ Zadajesz {damage} obrażeń!")
-            actual_damage = self.monster.take_damage(damage)
+            self.monster.take_damage(damage)
+
+            # Zwiększ combo
+            self.combo_hits += 1
+
+            # Sprawdź dodatkowy atak
+            self.check_extra_attack()
+
+            # Sprawdź efekty statusowe (krwawienie, trucizna)
+            self.apply_status_effects()
             return
 
         # Automatyczna porażka
         if attack_roll == 1:
             print(colored_text("💢 KRYTYCZNA PORAŻKA!", 'red'))
             print("Twój atak chybia!")
+            self.combo_hits = 0  # Reset combo
             return
 
         # Sprawdź trafienie
         if total_attack >= self.monster.armor_class:
             damage = roll(self.player.get_weapon_damage())
+
             # Dodaj modyfikator siły/zręczności
             if self.player.equipped['bron']:
                 attr = self.player.equipped['bron'].get('atrybut', 'sila')
@@ -211,10 +331,227 @@ class CombatSystem:
 
             damage = max(1, damage)  # Minimum 1 obrażenie
 
+            # Zastosuj bonus do obrażeń z talentów
+            damage = self.apply_damage_bonuses(damage)
+
             print(f"✓ Trafiasz! Zadajesz {damage} obrażeń!")
-            actual_damage = self.monster.take_damage(damage)
+            self.monster.take_damage(damage)
+
+            # Zwiększ combo
+            self.combo_hits += 1
+
+            # Sprawdź dodatkowy atak
+            self.check_extra_attack()
+
+            # Sprawdź efekty statusowe (krwawienie, trucizna)
+            self.apply_status_effects()
         else:
             print(colored_text("✗ Chybiasz!", 'red'))
+            self.combo_hits = 0  # Reset combo
+
+    def apply_damage_bonuses(self, base_damage):
+        """
+        Aplikuje bonusy do obrażeń z talentów i buffów.
+
+        Args:
+            base_damage: Bazowe obrażenia
+
+        Returns:
+            Obrażenia po bonusach
+        """
+        damage = base_damage
+
+        # Bonus % z talentów pasywnych
+        damage_bonus = self.talent_bonuses.get('damage_bonus', 0)
+        if damage_bonus > 0:
+            bonus_dmg = int(damage * damage_bonus)
+            damage += bonus_dmg
+            if bonus_dmg > 0:
+                print(colored_text(f"  ⚡ Bonus z talentów: +{bonus_dmg} obrażeń", 'yellow'))
+
+        # Sprawdź aktywne buffy (np. Szał Bojowy)
+        if 'rage_mode' in self.player.talent_buffs:
+            buff = self.player.talent_buffs['rage_mode']
+            multiplier = buff.get('damage_multiplier', 1.0)
+            original_damage = damage
+            damage = int(damage * multiplier)
+            print(colored_text(f"  🔥 SZAŁ BOJOWY: {original_damage} → {damage} obrażeń!", 'red'))
+
+        # Bonus z combo (Mistrz Combo)
+        if self.combo_hits >= 3 and self.player.has_talent('mistrz_broni_3'):
+            combo_bonus = int(damage * 0.15 * (self.combo_hits - 2))  # +15% za każde combo powyżej 3
+            damage += combo_bonus
+            print(colored_text(f"  💫 Combo x{self.combo_hits}: +{combo_bonus} obrażeń", 'cyan'))
+
+        return damage
+
+    def check_extra_attack(self):
+        """Sprawdza czy gracz dostaje dodatkowy atak z talentów."""
+        import random
+
+        # Podwójne Uderzenie (Berserker)
+        if self.player.has_talent('berserker_4'):
+            if random.random() < 0.25:  # 25% szansy
+                print(colored_text("\n⚡ PODWÓJNE UDERZENIE! Atakujesz ponownie!", 'yellow'))
+                press_enter("Naciśnij ENTER aby wykonać dodatkowy atak...")
+                self.player_attack()
+
+        # Seria Ciosów (Mistrz Broni)
+        elif self.player.has_talent('mistrz_broni_4'):
+            if random.random() < 0.30:  # 30% szansy
+                print(colored_text("\n⚔️ SERIA CIOSÓW! Wykonujesz dodatkowy atak!", 'yellow'))
+                press_enter("Naciśnij ENTER aby wykonać dodatkowy atak...")
+                self.player_attack()
+
+    def apply_status_effects(self):
+        """Aplikuje efekty statusowe na wroga (krwawienie, trucizna, itp.)."""
+        import random
+
+        # Krwawienie (Berserker, Zabójca)
+        if self.player.has_talent('berserker_3') or self.player.has_talent('zabojca_2'):
+            if random.random() < 0.20:  # 20% szansy
+                self.monster_effects['bleeding'] = 3  # 3 tury
+                self.monster_effects['bleeding_damage'] = 3 + self.player.level
+                print(colored_text(f"  🩸 {self.monster.name} zaczyna krwawić!", 'red'))
+
+        # Trucizna (Zabójca)
+        if self.player.has_talent('zabojca_3'):
+            if random.random() < 0.25:  # 25% szansy
+                self.monster_effects['poisoned'] = 4  # 4 tury
+                self.monster_effects['poison_damage'] = 2 + self.player.level // 2
+                print(colored_text(f"  ☠️ {self.monster.name} został zatruty!", 'green'))
+
+    def player_use_talent(self):
+        """Gracz używa aktywnej umiejętności z talentów."""
+        active_talents = self.player.get_active_talents()
+
+        if not active_talents:
+            print_error("Nie masz dostępnych umiejętności!")
+            return
+
+        print("\n--- Twoje umiejętności ---")
+        available_talents = []
+
+        for i, talent_id in enumerate(active_talents, 1):
+            talent_data = self.player.get_talent_data(talent_id)
+            if not talent_data:
+                continue
+
+            # Sprawdź cooldown
+            if talent_id in self.player.talent_cooldowns and self.player.talent_cooldowns[talent_id] > 0:
+                cooldown_left = self.player.talent_cooldowns[talent_id]
+                print(f"  {i}. {talent_data['nazwa']} - {colored_text(f'[Cooldown: {cooldown_left} tur]', 'red')}")
+                continue
+
+            available_talents.append((i, talent_id, talent_data))
+            cooldown = talent_data['efekt'].get('cooldown', 0)
+            print(f"  {i}. {talent_data['nazwa']} - {talent_data['opis']}")
+            if cooldown > 0:
+                print(f"      {colored_text(f'[Cooldown: {cooldown} tur]', 'yellow')}")
+
+        if not available_talents:
+            print_warning("\nWszystkie umiejętności są na cooldownie!")
+            press_enter()
+            return
+
+        print(f"  0. Anuluj")
+
+        try:
+            choice = int(input("\nWybierz umiejętność: "))
+            if choice == 0:
+                return
+
+            # Znajdź wybraną umiejętność
+            selected = None
+            for num, talent_id, talent_data in available_talents:
+                if num == choice:
+                    selected = (talent_id, talent_data)
+                    break
+
+            if not selected:
+                print_error("Nieprawidłowy wybór!")
+                return
+
+            talent_id, talent_data = selected
+
+            # Użyj talentu
+            success = self.player.use_talent(talent_id)
+            if success:
+                print_success(f"\n✨ Używasz: {talent_data['nazwa']}!")
+
+                # Aplikuj efekt w walce
+                self.apply_talent_effect(talent_id, talent_data)
+            else:
+                print_error("Nie udało się użyć umiejętności!")
+
+        except ValueError:
+            print_error("Wprowadź poprawną liczbę!")
+
+    def apply_talent_effect(self, talent_id, talent_data):
+        """
+        Aplikuje efekt aktywnego talentu w walce.
+
+        Args:
+            talent_id: ID talentu
+            talent_data: Dane talentu
+        """
+        import random
+
+        efekt = talent_data['efekt']
+        typ = efekt.get('typ')
+
+        # Szał Bojowy (Berserker Ultimate)
+        if typ == 'rage_mode':
+            duration = efekt.get('duration', 3)
+            self.player.talent_buffs['rage_mode'] = {
+                'damage_multiplier': efekt.get('damage_multiplier', 2.0),
+                'turns_left': duration,
+                'cost_per_turn': efekt.get('cost_per_turn', 5)
+            }
+            print(colored_text(f"🔥 Wpadasz w SZAŁ BOJOWY na {duration} tury!", 'red'))
+            print(colored_text(f"   Obrażenia x{efekt.get('damage_multiplier', 2.0)}, ale tracisz {efekt.get('cost_per_turn', 5)} HP/turę", 'yellow'))
+
+        # Niewidzialność (Zabójca Ultimate)
+        elif typ == 'invisibility':
+            duration = efekt.get('duration', 2)
+            self.player.talent_buffs['invisibility'] = {
+                'turns_left': duration,
+                'dodge_bonus': efekt.get('dodge_bonus', 100)
+            }
+            print(colored_text(f"👻 Stajesz się NIEWIDZIALNY na {duration} tury!", 'cyan'))
+            print(colored_text(f"   Unikasz wszystkich ataków!", 'cyan'))
+
+        # Święty Gniew (Paladyn Ultimate)
+        elif typ == 'holy_fury':
+            damage = roll(efekt.get('damage', '10d8'))
+            heal = roll(efekt.get('heal', '5d8'))
+            self.monster.take_damage(damage, 'holy')
+            self.player.heal(heal)
+            print(colored_text(f"✨ ŚWIĘTY GNIEW spada na {self.monster.name}!", 'yellow'))
+            print(f"   💥 Zadajesz {damage} obrażeń świętym ogniem!")
+            print(f"   ⚕️ Leczysz się o {heal} HP!")
+
+        # Bezpośrednie obrażenia
+        elif typ == 'direct_damage':
+            damage = roll(efekt.get('damage', '5d8'))
+            self.monster.take_damage(damage)
+            print(f"   💥 Zadajesz {damage} obrażeń!")
+
+        # Leczenie
+        elif typ == 'heal':
+            heal = roll(efekt.get('amount', '4d8+10'))
+            self.player.heal(heal)
+            print(f"   ⚕️ Leczysz się o {heal} HP!")
+
+        # Tarcza ochronna
+        elif typ == 'shield':
+            duration = efekt.get('duration', 3)
+            absorption = efekt.get('absorption', 20)
+            self.player.talent_buffs['shield'] = {
+                'turns_left': duration,
+                'absorption': absorption
+            }
+            print(colored_text(f"🛡️ Otacza cię magiczna tarcza absorbująca {absorption} obrażeń przez {duration} tury!", 'blue'))
 
     def player_cast_spell(self):
         """Gracz rzuca zaklęcie."""
@@ -325,21 +662,49 @@ class CombatSystem:
 
     def monster_turn(self):
         """Tura potwora."""
+        import random
+
         print(f"\n--- Tura {self.monster.name} ---")
 
         # Potwór atakuje
         attack_roll, attack_bonus, damage_roll = self.monster.attack()
+
+        # Sprawdź KP z bonusem z talentów
+        player_ac = self.player.armor_class + self.talent_bonuses.get('armor_bonus', 0)
+
         total_attack = attack_roll + attack_bonus
 
         print(f"🎲 {self.monster.name} atakuje!")
-        print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {self.player.armor_class}")
+        if self.talent_bonuses.get('armor_bonus', 0) > 0:
+            print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {player_ac} ({self.player.armor_class}+{self.talent_bonuses['armor_bonus']} z talentów)")
+        else:
+            print(f"   Rzut: {attack_roll} + {attack_bonus} = {total_attack} vs KP {player_ac}")
+
+        # Sprawdź niewidzialność (auto-dodge)
+        if 'invisibility' in self.player.talent_buffs:
+            print(colored_text("👻 Jesteś niewidzialny - atak przechodzi przez ciebie!", 'cyan'))
+            return
+
+        # Sprawdź dodge/evasion
+        dodge_chance = self.talent_bonuses.get('dodge_chance', 0)
+        if dodge_chance > 0 and random.randint(1, 100) <= dodge_chance:
+            print(colored_text(f"⚡ UNIK! Zwinnie unikasz ataku! (szansa: {dodge_chance}%)", 'cyan'))
+            return
 
         # Krytyk
         if attack_roll == 20:
             print(colored_text("💥 KRYTYCZNE TRAFIENIE WROGA!", 'red'))
             damage = roll(damage_roll) * 2
-            self.player.take_damage(damage)
-            print(f"⚔ {self.monster.name} zadaje ci {damage} obrażeń!")
+
+            # Sprawdź tarczę
+            damage = self.apply_shield_absorption(damage)
+
+            if damage > 0:
+                self.player.take_damage(damage)
+                print(f"⚔ {self.monster.name} zadaje ci {damage} obrażeń!")
+
+                # Sprawdź odbicie obrażeń
+                self.check_damage_reflect(damage)
             return
 
         # Automatyczna porażka
@@ -348,12 +713,86 @@ class CombatSystem:
             return
 
         # Sprawdź trafienie
-        if total_attack >= self.player.armor_class:
+        if total_attack >= player_ac:
             damage = roll(damage_roll)
-            self.player.take_damage(damage)
-            print(colored_text(f"✗ {self.monster.name} trafia! Otrzymujesz {damage} obrażeń!", 'red'))
+
+            # Sprawdź tarczę
+            damage = self.apply_shield_absorption(damage)
+
+            if damage > 0:
+                self.player.take_damage(damage)
+                print(colored_text(f"✗ {self.monster.name} trafia! Otrzymujesz {damage} obrażeń!", 'red'))
+
+                # Sprawdź odbicie obrażeń
+                self.check_damage_reflect(damage)
+
+                # Sprawdź kontratak
+                self.check_counter_attack()
         else:
             print(colored_text(f"✓ Bronisz się przed atakiem!", 'green'))
+
+    def apply_shield_absorption(self, damage):
+        """
+        Aplikuje absorpcję obrażeń przez tarczę.
+
+        Args:
+            damage: Bazowe obrażenia
+
+        Returns:
+            Obrażenia po absorpcji
+        """
+        if 'shield' in self.player.talent_buffs:
+            absorption = self.player.talent_buffs['shield'].get('absorption', 0)
+            absorbed = min(damage, absorption)
+            remaining_damage = max(0, damage - absorbed)
+
+            print(colored_text(f"🛡️ Tarcza absorbuje {absorbed} obrażeń!", 'blue'))
+
+            # Zmniejsz absorpcję tarczy
+            self.player.talent_buffs['shield']['absorption'] -= absorbed
+
+            # Jeśli tarcza się wyczerpała, usuń ją
+            if self.player.talent_buffs['shield']['absorption'] <= 0:
+                del self.player.talent_buffs['shield']
+                print_warning("🛡️ Tarcza ochronna została zniszczona!")
+
+            return remaining_damage
+
+        return damage
+
+    def check_damage_reflect(self, damage):
+        """
+        Sprawdza i aplikuje odbicie obrażeń.
+
+        Args:
+            damage: Otrzymane obrażenia
+        """
+        reflect_percent = self.talent_bonuses.get('damage_reflect', 0)
+        if reflect_percent > 0:
+            reflected = int(damage * reflect_percent)
+            if reflected > 0:
+                self.monster.take_damage(reflected)
+                print(colored_text(f"⚔️ Odbijasz {reflected} obrażeń na {self.monster.name}! ({int(reflect_percent * 100)}%)", 'yellow'))
+
+    def check_counter_attack(self):
+        """Sprawdza szansę na kontratak po otrzymaniu obrażeń."""
+        import random
+
+        # Kontratak (Obrońca)
+        if self.player.has_talent('obronca_3'):
+            if random.random() < 0.20:  # 20% szansy
+                print(colored_text("\n⚡ KONTRATAK! Odpowiadasz błyskawicznym ciosem!", 'yellow'))
+                # Wykonaj atak (uproszczony, bez wszystkich bonusów)
+                damage = roll(self.player.get_weapon_damage())
+                if self.player.equipped['bron']:
+                    attr = self.player.equipped['bron'].get('atrybut', 'sila')
+                    damage += self.player.get_modifier(attr)
+                else:
+                    damage += self.player.get_modifier('sila')
+
+                damage = max(1, damage)
+                self.monster.take_damage(damage)
+                print(f"   💥 Zadajesz {damage} obrażeń kontratakując!")
 
     def attempt_flee(self):
         """
