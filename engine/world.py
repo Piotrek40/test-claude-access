@@ -253,7 +253,7 @@ class World:
 
         Args:
             player: Postać gracza
-            treasures: Lista skarbów (format: "przedmiot:szansa%")
+            treasures: Lista skarbów (formaty: "zloto:50-150", "przedmiot:20%", "przedmiot")
         """
         print_success("\n💰 Znalazłeś skarb!")
 
@@ -261,17 +261,28 @@ class World:
             parts = treasure.split(':')
             item_id = parts[0]
 
-            # Sprawdź szansę
-            chance = 100
-            if len(parts) > 1:
-                chance = int(parts[1].rstrip('%'))
-
-            if random.randint(1, 100) <= chance:
-                if item_id == 'zloto':
-                    gold = random.randint(50, 150)
-                    player.gold += gold
-                    print(f"  + {gold} złota")
+            # Specjalna obsługa dla złota
+            if item_id == 'zloto':
+                if len(parts) > 1:
+                    # Format "zloto:50-150" lub "zloto:100"
+                    gold_range = parts[1]
+                    if '-' in gold_range:
+                        min_gold, max_gold = gold_range.split('-')
+                        gold = random.randint(int(min_gold), int(max_gold))
+                    else:
+                        gold = int(gold_range)
                 else:
+                    gold = 10  # Domyślna wartość
+                player.gold += gold
+                print(f"  + {gold} złota")
+            else:
+                # Dla przedmiotów sprawdź szansę
+                chance = 100
+                if len(parts) > 1:
+                    # Format "przedmiot:20%" - usuń % i parsuj
+                    chance = int(parts[1].rstrip('%'))
+
+                if random.randint(1, 100) <= chance:
                     # Znajdź przedmiot
                     with open('data/items.json', 'r', encoding='utf-8') as f:
                         items_data = json.load(f)
