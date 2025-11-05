@@ -570,8 +570,8 @@ class CombatSystem:
             print(colored_text("✗ Chybiasz!", 'red'))
             self.combo_hits = 0  # Reset combo
 
-            # Nawet jeśli chybiliśmy, niektóre efekty się aplikują
-            if config['effect'] in ['defensive_buff', 'all_out']:
+            # Nawet jeśli chybiliśmy, niektóre efekty się aplikują (defensive_buff, vulnerable_self)
+            if config['effect'] in ['defensive_buff', 'vulnerable_self']:
                 self.apply_attack_type_effects(config)
 
     def apply_damage_bonuses(self, base_damage):
@@ -944,7 +944,6 @@ class CombatSystem:
                 print(colored_text(f"💢 {self.monster.name} WPADA W SZAŁ!", 'red'))
                 print(colored_text(f"   Oczy płoną gniewem! Ataki są silniejsze!", 'red'))
                 print_separator("!")
-                press_enter()
                 # Po enrage nadal atakuje w tej turze
 
         # 2. UŻYCIE MIKSTURY - gdy HP < 30% i ma miksturę (tylko raz)
