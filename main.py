@@ -216,6 +216,7 @@ class Game:
 
             options = [
                 "Eksploruj lokację",
+                "Dziennik questów",
                 "Zobacz ekwipunek",
                 "Odpoczynek",
                 "Zapisz grę",
@@ -230,13 +231,15 @@ class Game:
                     # Gracz zginął
                     self.player_death()
                     return
-            elif choice == 1:  # Zobacz ekwipunek
+            elif choice == 1:  # Dziennik questów
+                self.world.show_all_quests(self.player)
+            elif choice == 2:  # Zobacz ekwipunek
                 self.world.show_inventory(self.player)
-            elif choice == 2:  # Odpoczynek
+            elif choice == 3:  # Odpoczynek
                 self.world.rest(self.player)
-            elif choice == 3:  # Zapisz grę
+            elif choice == 4:  # Zapisz grę
                 self.save_game()
-            elif choice == 4:  # Menu główne
+            elif choice == 5:  # Menu główne
                 if self.confirm_quit():
                     return
 

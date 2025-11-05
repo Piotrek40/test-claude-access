@@ -70,6 +70,9 @@ class World:
         print(location['opis'])
         print_separator()
 
+        # Aktualizuj postęp questów - odwiedzenie lokacji
+        self.update_quest_progress(player, 'visit', location_id)
+
         # Sprawdź losowe spotkania
         if location.get('niebezpieczenstwo') and random.randint(1, 100) <= 30:
             if self.random_encounter(player, location):
@@ -146,6 +149,9 @@ class World:
                     combat = CombatSystem(player, monster)
                     if not combat.start_combat():
                         return False  # Gracz przegrał
+                    else:
+                        # Aktualizuj postęp questów
+                        self.update_quest_progress(player, 'kill', monster_id)
 
         # Sprawdź czy są skarby
         if 'skarby' in place:
@@ -155,11 +161,15 @@ class World:
         if 'boss' in place:
             print(colored_text("⚔ SPOTKANIE Z BOSSEM! ⚔", 'red'))
             press_enter()
-            monster = load_monster(place['boss'])
+            boss_id = place['boss']
+            monster = load_monster(boss_id)
             if monster:
                 combat = CombatSystem(player, monster)
                 if not combat.start_combat():
                     return False  # Gracz przegrał
+                else:
+                    # Aktualizuj postęp questów
+                    self.update_quest_progress(player, 'kill', boss_id)
 
         # Sprawdź NPC
         if 'npc' in place:
@@ -221,10 +231,15 @@ class World:
                 # To spotkanie!
                 if 'potwar' in encounter:
                     print(colored_text("\n⚠ SPOTKANIE Z POTWOREM! ⚠", 'red'))
-                    monster = load_monster(encounter['potwar'])
+                    monster_id = encounter['potwar']
+                    monster = load_monster(monster_id)
                     if monster:
                         combat = CombatSystem(player, monster)
-                        return combat.start_combat()
+                        result = combat.start_combat()
+                        if result:
+                            # Gracz wygrał - aktualizuj quest
+                            self.update_quest_progress(player, 'kill', monster_id)
+                        return result
                 elif 'wydarzenie' in encounter:
                     # Inne wydarzenie (np. znaleziony skarb)
                     return True
@@ -286,14 +301,70 @@ class World:
 
         # Powitanie
         if 'dialogi' in npc and 'powitanie' in npc['dialogi']:
-            print(f"{npc['nazwa']}: \"{npc['dialogi']['powitanie']}\"")
+            print(f"\n{npc['nazwa']}: \"{npc['dialogi']['powitanie']}\"")
 
-        # Handel
-        if npc.get('handel', False):
-            if input("\nChcesz handlować? (t/n): ").lower() in ['t', 'tak']:
-                self.trade_with_npc(player, npc)
+        # Menu dialogowe
+        while True:
+            print_separator("-")
+            options = []
 
-        press_enter()
+            # Sprawdź questy
+            if 'quest' in npc:
+                quest_id = npc['quest']
+                # Sprawdź czy quest jest już aktywny
+                if quest_id in player.active_quests:
+                    # Quest aktywny - sprawdź czy ukończony
+                    if self.check_quest_completion(player, quest_id):
+                        options.append("Oddaj quest")
+                    else:
+                        options.append("Sprawdź postęp questa")
+                elif quest_id not in player.completed_quests:
+                    # Quest dostępny
+                    options.append("Porozmawiaj o problemie")
+
+            # Handel
+            if npc.get('handel', False):
+                options.append("Handluj")
+
+            # Plotki/rozmowa
+            if 'dialogi' in npc and 'plotki' in npc['dialogi']:
+                options.append("Posłuchaj plotek")
+
+            options.append("Zakończ rozmowę")
+
+            # Jeśli tylko opcja to "Zakończ rozmowę", od razu wychodzimy
+            if len(options) == 1:
+                break
+
+            print("\nCo chcesz zrobić?")
+            for i, opt in enumerate(options, 1):
+                print(f"  {i}. {opt}")
+
+            try:
+                choice = int(input("\nWybór: ").strip())
+                if 1 <= choice <= len(options):
+                    selected = options[choice - 1]
+
+                    if selected == "Porozmawiaj o problemie":
+                        self.start_quest(player, npc)
+                    elif selected == "Oddaj quest":
+                        self.complete_quest(player, npc)
+                        break  # Po oddaniu questa wychodzimy z rozmowy
+                    elif selected == "Sprawdź postęp questa":
+                        self.show_quest_progress(player, npc['quest'])
+                    elif selected == "Handluj":
+                        self.trade_with_npc(player, npc)
+                    elif selected == "Posłuchaj plotek":
+                        print(f"\n{npc['nazwa']}: \"{npc['dialogi']['plotki']}\"")
+                        press_enter()
+                    elif selected == "Zakończ rozmowę":
+                        break
+                else:
+                    print_error("Nieprawidłowy wybór!")
+            except ValueError:
+                print_error("Wprowadź poprawną liczbę!")
+
+        print("\nŻegnaj!")
 
     def trade_with_npc(self, player, npc):
         """
@@ -448,3 +519,315 @@ class World:
             return None
 
         return destinations[choice]
+
+    def start_quest(self, player, npc):
+        """
+        Rozpoczyna quest od NPC.
+
+        Args:
+            player: Postać gracza
+            npc: Dane NPC
+        """
+        quest_id = npc.get('quest')
+        if not quest_id:
+            return
+
+        quest_data = self.quests.get(quest_id)
+        if not quest_data:
+            return
+
+        print_separator("=")
+        print(colored_text(f"NOWY QUEST: {quest_data['nazwa']}", 'yellow'))
+        print_separator("=")
+
+        # Wyświetl dialog startowy
+        if 'dialogi' in npc and 'quest_start' in npc['dialogi']:
+            print(f"\n{npc['nazwa']}: \"{npc['dialogi']['quest_start']}\"")
+
+        print(f"\n{quest_data['opis']}")
+
+        # Sprawdź wymagania
+        if 'wymagania' in quest_data:
+            reqs = quest_data['wymagania']
+            if 'min_poziom' in reqs and player.level < reqs['min_poziom']:
+                print_error(f"\nPotrzebujesz poziom {reqs['min_poziom']} aby przyjąć ten quest!")
+                press_enter()
+                return
+
+        # Przyjmij quest
+        if input("\n\nCzy chcesz przyjąć ten quest? (t/n): ").lower() in ['t', 'tak']:
+            # Dodaj quest z pierwszym etapem
+            quest_state = {
+                'id': quest_id,
+                'etap': 1,
+                'postep': {}
+            }
+            player.active_quests.append(quest_state)
+            print_success(f"\n✓ Przyjąłeś quest: {quest_data['nazwa']}")
+
+            # Pokaż pierwszy etap
+            etap = quest_data['etapy'][0]
+            print(f"\n--- {etap['nazwa']} ---")
+            print(etap['opis'])
+            press_enter()
+        else:
+            print("\nMoże później...")
+            press_enter()
+
+    def complete_quest(self, player, npc):
+        """
+        Oddaje ukończony quest.
+
+        Args:
+            player: Postać gracza
+            npc: Dane NPC
+        """
+        quest_id = npc.get('quest')
+        if not quest_id:
+            return
+
+        # Znajdź quest w aktywnych
+        quest_state = None
+        for q in player.active_quests:
+            if q['id'] == quest_id:
+                quest_state = q
+                break
+
+        if not quest_state:
+            return
+
+        quest_data = self.quests.get(quest_id)
+        current_etap = quest_data['etapy'][quest_state['etap'] - 1]
+
+        print_separator("=")
+        print(colored_text(f"QUEST UKOŃCZONY: {quest_data['nazwa']}", 'green'))
+        print_separator("=")
+
+        # Dialog ukończenia
+        if 'dialogi' in npc and 'quest_complete' in npc['dialogi']:
+            print(f"\n{npc['nazwa']}: \"{npc['dialogi']['quest_complete']}\"")
+
+        # Nagrody
+        print("\n--- NAGRODY ---")
+        if 'nagroda_xp' in current_etap:
+            xp = current_etap['nagroda_xp']
+            print(f"+ {xp} XP")
+            leveled_up = player.add_xp(xp)
+            if leveled_up:
+                print_success(f"🌟 AWANS NA POZIOM {player.level}! 🌟")
+
+        if 'nagroda_zloto' in current_etap:
+            gold = current_etap['nagroda_zloto']
+            player.gold += gold
+            print(f"+ {gold} złota")
+
+        if 'nagroda_przedmioty' in current_etap:
+            with open('data/items.json', 'r', encoding='utf-8') as f:
+                items_data = json.load(f)
+
+            for item_id in current_etap['nagroda_przedmioty']:
+                for category in items_data.values():
+                    if item_id in category:
+                        item = category[item_id].copy()
+                        player.add_item(item)
+                        print(f"+ {item['nazwa']}")
+                        break
+
+        # Sprawdź czy są kolejne etapy
+        if 'kolejny_etap' in current_etap:
+            next_etap_num = current_etap['kolejny_etap']
+            quest_state['etap'] = next_etap_num
+            next_etap = quest_data['etapy'][next_etap_num - 1]
+            print_separator("-")
+            print(colored_text(f"NASTĘPNY ETAP: {next_etap['nazwa']}", 'cyan'))
+            print(next_etap['opis'])
+        elif current_etap.get('koniec', False):
+            # Quest całkowicie ukończony
+            player.active_quests.remove(quest_state)
+            player.completed_quests.append(quest_id)
+            print_separator("-")
+            print_success("Quest całkowicie ukończony!")
+
+        press_enter()
+
+    def check_quest_completion(self, player, quest_id):
+        """
+        Sprawdza czy quest jest ukończony.
+
+        Args:
+            player: Postać gracza
+            quest_id: ID questa
+
+        Returns:
+            True jeśli quest jest ukończony
+        """
+        # Znajdź quest w aktywnych
+        quest_state = None
+        for q in player.active_quests:
+            if q['id'] == quest_id:
+                quest_state = q
+                break
+
+        if not quest_state:
+            return False
+
+        quest_data = self.quests.get(quest_id)
+        current_etap = quest_data['etapy'][quest_state['etap'] - 1]
+
+        # Sprawdź cel
+        cel = current_etap['cel']
+
+        # Różne typy celów
+        if cel.startswith('pokonaj:'):
+            # Format: "pokonaj:goblin" lub "pokonaj:goblin:5"
+            parts = cel.split(':')
+            monster_id = parts[1]
+            required_count = int(parts[2]) if len(parts) > 2 else 1
+
+            killed = quest_state['postep'].get(f'killed_{monster_id}', 0)
+            return killed >= required_count
+
+        elif cel.startswith('odwiedz_lokacje:'):
+            # Format: "odwiedz_lokacje:ciemny_las"
+            location_id = cel.split(':')[1]
+            return quest_state['postep'].get(f'visited_{location_id}', False)
+
+        elif cel.startswith('porozmawiaj:'):
+            # Format: "porozmawiaj:starosta"
+            npc_id = cel.split(':')[1]
+            # Ten cel będzie spełniony gdy gracz rozmawia z NPC
+            return True
+
+        elif cel.startswith('zbierz:'):
+            # Format: "zbierz:item_id:5"
+            parts = cel.split(':')
+            item_id = parts[1]
+            required_count = int(parts[2]) if len(parts) > 2 else 1
+
+            # Sprawdź w ekwipunku
+            count = sum(1 for item in player.inventory if item.get('id') == item_id)
+            return count >= required_count
+
+        return False
+
+    def show_quest_progress(self, player, quest_id):
+        """
+        Pokazuje postęp questa.
+
+        Args:
+            player: Postać gracza
+            quest_id: ID questa
+        """
+        # Znajdź quest
+        quest_state = None
+        for q in player.active_quests:
+            if q['id'] == quest_id:
+                quest_state = q
+                break
+
+        if not quest_state:
+            print_error("Nie masz tego questa!")
+            press_enter()
+            return
+
+        quest_data = self.quests.get(quest_id)
+        current_etap = quest_data['etapy'][quest_state['etap'] - 1]
+
+        print_separator("=")
+        print(colored_text(f"QUEST: {quest_data['nazwa']}", 'cyan'))
+        print_separator("=")
+        print(f"\nAktualny etap: {current_etap['nazwa']}")
+        print(current_etap['opis'])
+
+        # Pokaż postęp
+        cel = current_etap['cel']
+        if cel.startswith('pokonaj:'):
+            parts = cel.split(':')
+            monster_id = parts[1]
+            required_count = int(parts[2]) if len(parts) > 2 else 1
+            killed = quest_state['postep'].get(f'killed_{monster_id}', 0)
+            print(f"\nPostęp: {killed}/{required_count}")
+
+        if self.check_quest_completion(player, quest_id):
+            print_success("\n✓ Etap ukończony! Wróć do zleceniodawcy!")
+        else:
+            print("\n⚠ Quest w trakcie...")
+
+        press_enter()
+
+    def update_quest_progress(self, player, event_type, event_data):
+        """
+        Aktualizuje postęp questów.
+
+        Args:
+            player: Postać gracza
+            event_type: Typ wydarzenia ('kill', 'visit', 'talk')
+            event_data: Dane wydarzenia (ID potwora, lokacji, NPC)
+        """
+        for quest_state in player.active_quests:
+            quest_data = self.quests.get(quest_state['id'])
+            if not quest_data:
+                continue
+
+            current_etap = quest_data['etapy'][quest_state['etap'] - 1]
+            cel = current_etap['cel']
+
+            # Aktualizuj w zależności od typu
+            if event_type == 'kill' and cel.startswith('pokonaj:'):
+                monster_id = cel.split(':')[1]
+                if monster_id == event_data:
+                    key = f'killed_{monster_id}'
+                    quest_state['postep'][key] = quest_state['postep'].get(key, 0) + 1
+                    print_success(f"✓ Postęp questa zaktualizowany!")
+
+            elif event_type == 'visit' and cel.startswith('odwiedz_lokacje:'):
+                location_id = cel.split(':')[1]
+                if location_id == event_data or event_data in location_id:
+                    quest_state['postep'][f'visited_{location_id}'] = True
+                    print_success(f"✓ Postęp questa zaktualizowany!")
+
+    def show_all_quests(self, player):
+        """
+        Wyświetla wszystkie questy gracza.
+
+        Args:
+            player: Postać gracza
+        """
+        print_header("DZIENNIK QUESTÓW")
+
+        # Aktywne questy
+        if player.active_quests:
+            print(colored_text("\n=== AKTYWNE QUESTY ===", 'yellow'))
+            for quest_state in player.active_quests:
+                quest_data = self.quests.get(quest_state['id'])
+                if quest_data:
+                    current_etap = quest_data['etapy'][quest_state['etap'] - 1]
+                    print(f"\n📜 {quest_data['nazwa']}")
+                    print(f"   Etap {quest_state['etap']}: {current_etap['nazwa']}")
+
+                    # Sprawdź czy ukończony
+                    if self.check_quest_completion(player, quest_state['id']):
+                        print(colored_text("   ✓ Gotowy do oddania!", 'green'))
+                    else:
+                        # Pokaż postęp
+                        cel = current_etap['cel']
+                        if cel.startswith('pokonaj:'):
+                            parts = cel.split(':')
+                            monster_id = parts[1]
+                            required = int(parts[2]) if len(parts) > 2 else 1
+                            killed = quest_state['postep'].get(f'killed_{monster_id}', 0)
+                            print(f"   Postęp: {killed}/{required}")
+                        else:
+                            print(f"   W trakcie...")
+        else:
+            print("\nNie masz aktywnych questów.")
+
+        # Ukończone questy
+        if player.completed_quests:
+            print(colored_text("\n\n=== UKOŃCZONE QUESTY ===", 'green'))
+            for quest_id in player.completed_quests:
+                quest_data = self.quests.get(quest_id)
+                if quest_data:
+                    print(f"✓ {quest_data['nazwa']}")
+
+        press_enter()
