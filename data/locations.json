@@ -43,6 +43,11 @@
       "typ": "dzicz",
       "opis": "Gęsty, mroczny las. Światło słońca z trudem przebija się przez korony drzew. Słychać dziwne odgłosy.",
       "niebezpieczenstwo": "wysokie",
+      "gatherable_materials": {
+        "ziola_leczace": {"szansa": 40, "ilosc": "1-3"},
+        "grzyby_many": {"szansa": 20, "ilosc": "1-2"},
+        "skora": {"szansa": 15, "ilosc": "1"}
+      },
       "losowe_spotkania": [
         {"potwar": "wilk", "szansa": 30},
         {"potwar": "goblin", "szansa": 25},
@@ -73,6 +78,11 @@
       "typ": "dzicz",
       "opis": "Wąska ścieżka prowadząca w góry. Z jednej strony skalista ściana, z drugiej przepaść.",
       "niebezpieczenstwo": "średnie",
+      "gatherable_materials": {
+        "kamien_ostrzacy": {"szansa": 35, "ilosc": "1-2"},
+        "kamien_szlif": {"szansa": 20, "ilosc": "1"},
+        "stal": {"szansa": 15, "ilosc": "1"}
+      },
       "wymaga_test": {
         "typ": "atletyka",
         "trudnosc": 12,
@@ -93,6 +103,11 @@
       "typ": "dungeon",
       "opis": "Stara kopalnia, dawno temu porzucona przez górników. Mówią, że coś złowrogiego się tu osiedliło.",
       "niebezpieczenstwo": "bardzo_wysokie",
+      "gatherable_materials": {
+        "stal": {"szansa": 50, "ilosc": "2-4"},
+        "krysztaly_many": {"szansa": 25, "ilosc": "1-2"},
+        "starozytny_metal": {"szansa": 10, "ilosc": "1"}
+      },
       "miejsca": {
         "wejscie": {
           "nazwa": "Wejście do Kopalni",

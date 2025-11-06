@@ -5,6 +5,7 @@ from utils.display import (print_header, print_separator, press_enter,
                             print_menu, colored_text, print_error, print_success)
 from engine.combat import load_monster, CombatSystem
 from engine.crafting import CraftingSystem
+from engine.trading import TradingSystem
 
 
 class World:
@@ -14,6 +15,7 @@ class World:
         """Inicjalizuje świat gry."""
         self.load_data()
         self.crafting = CraftingSystem()
+        self.trading = TradingSystem()
 
     def load_data(self):
         """Wczytuje dane świata z plików JSON."""
@@ -195,16 +197,45 @@ class World:
         """Eksploruje okolicę (szukanie skarbów, losowe wydarzenia)."""
         print("\nRozglądasz się po okolicy...")
 
-        # Szansa na znalezienie czegoś
+        found_something = False
+
+        # Sprawdź czy można zbierać materiały
+        gatherable = location.get('gatherable_materials', {})
+        if gatherable:
+            print(colored_text("\n🌿 Możesz tutaj zbierać materiały!", 'green'))
+
+            for material_id, data in gatherable.items():
+                chance = data.get('szansa', 0)
+                roll = random.randint(1, 100)
+
+                if roll <= chance:
+                    # Znaleziono materiał!
+                    amount_range = data.get('ilosc', '1')
+                    if '-' in amount_range:
+                        min_amt, max_amt = map(int, amount_range.split('-'))
+                        amount = random.randint(min_amt, max_amt)
+                    else:
+                        amount = int(amount_range)
+
+                    # Dodaj materiał
+                    self.crafting.add_materials_to_player(player, {material_id: amount})
+
+                    # Pobierz nazwę materiału
+                    mat_name = self.crafting.get_material_name(material_id)
+                    print_success(f"✓ Znalazłeś: {mat_name} x{amount}")
+                    found_something = True
+
+        # Dodatkowa szansa na znalezienie złota lub mikstury
         roll = random.randint(1, 100)
 
-        if roll <= 20:
+        if roll <= 15 and not found_something:
             # Znaleziono skarb
             print_success("✓ Znalazłeś coś!")
             gold = random.randint(10, 50)
             player.gold += gold
             print(f"+ {gold} złota")
-        elif roll <= 30:
+            found_something = True
+        elif roll <= 25 and not found_something:
             # Znaleziono miksturę
             print_success("✓ Znalazłeś miksturę leczenia!")
             # Dodaj miksturę do ekwipunku
@@ -212,8 +243,10 @@ class World:
                 items_data = json.load(f)
                 potion = items_data['mikstury']['mikstura_leczenia'].copy()
                 player.add_item(potion)
-        else:
-            print("Nic ciekawego nie znalazłeś.")
+            found_something = True
+
+        if not found_something:
+            print("Nic ciekawego nie znalazłeś tym razem.")
 
         press_enter()
 
@@ -391,54 +424,15 @@ class World:
 
     def trade_with_npc(self, player, npc):
         """
-        Handel z NPC.
+        Handel z NPC - używa nowego systemu tradingu.
 
         Args:
             player: Postać gracza
             npc: Dane NPC
         """
-        print_header("HANDEL")
-        print(f"Twoje złoto: {player.gold}")
-        print_separator()
-
-        asortyment = npc.get('asortyment', [])
-        if not asortyment:
-            print("Ten handlarz nie ma nic do sprzedania.")
-            return
-
-        # Wczytaj przedmioty
-        with open('data/items.json', 'r', encoding='utf-8') as f:
-            items_data = json.load(f)
-
-        while True:
-            print("\nDostępne przedmioty:")
-            items = []
-            for item_id in asortyment:
-                for category in items_data.values():
-                    if item_id in category:
-                        item = category[item_id]
-                        items.append(item)
-                        print(f"  {len(items)}. {item['nazwa']} - {item['wartosc']} złota")
-                        break
-
-            print(f"  0. Zakończ handel")
-
-            try:
-                choice = int(input("\nCo chcesz kupić? "))
-                if choice == 0:
-                    break
-                if 1 <= choice <= len(items):
-                    item = items[choice - 1]
-                    if player.gold >= item['wartosc']:
-                        player.gold -= item['wartosc']
-                        player.add_item(item.copy())
-                        print_success(f"Kupiono {item['nazwa']}!")
-                    else:
-                        print_error("Nie masz wystarczająco złota!")
-                else:
-                    print_error("Nieprawidłowy wybór!")
-            except ValueError:
-                print_error("Wprowadź poprawną liczbę!")
+        # Deleguj do trading systemu
+        merchant_id = npc.get('id', 'unknown_merchant')
+        self.trading.show_trading_menu(player, merchant_id, npc)
 
     def show_inventory(self, player):
         """Pokazuje ekwipunek gracza."""
