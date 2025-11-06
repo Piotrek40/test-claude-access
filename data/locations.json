@@ -21,8 +21,9 @@
         },
         "kuznia": {
           "nazwa": "Kuźnia",
-          "opis": "Gorące powietrze uderza w twarz. Kowal pracuje przy ogniu.",
-          "akcje": ["handel", "naprawa_ekwipunku"],
+          "opis": "Gorące powietrze uderza w twarz. Kowal pracuje przy ogniu. W rogu widzisz stację craftingową z narzędziami.",
+          "akcje": ["handel", "naprawa_ekwipunku", "crafting"],
+          "crafting_station": true,
           "npc": ["kowal"]
         },
         "dom_starosty": {
