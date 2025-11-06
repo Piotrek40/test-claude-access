@@ -438,9 +438,7 @@ class CraftingSystem:
     def dismantle_item_menu(self, player):
         """Menu rozkładania przedmiotów na materiały."""
         print_separator("=")
-        print("♻️  ROZK
-
-ŁADANIE PRZEDMIOTÓW")
+        print("♻️  ROZKŁADANIE PRZEDMIOTÓW")
         print_separator("=")
         print_warning("Ta funkcja będzie dostępna wkrótce!")
         press_enter()

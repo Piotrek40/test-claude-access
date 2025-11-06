@@ -4,6 +4,7 @@ import random
 from utils.display import (print_header, print_separator, press_enter,
                             print_menu, colored_text, print_error, print_success)
 from engine.combat import load_monster, CombatSystem
+from engine.crafting import CraftingSystem
 
 
 class World:
@@ -12,6 +13,7 @@ class World:
     def __init__(self):
         """Inicjalizuje świat gry."""
         self.load_data()
+        self.crafting = CraftingSystem()
 
     def load_data(self):
         """Wczytuje dane świata z plików JSON."""
@@ -175,6 +177,16 @@ class World:
         if 'npc' in place:
             for npc_id in place['npc']:
                 self.talk_to_npc(player, npc_id)
+
+        # Sprawdź czy jest stacja craftingowa
+        if place.get('crafting_station', False):
+            print_separator()
+            print(colored_text("🔨 Dostępna: Stacja Craftingowa", 'yellow'))
+            print("W rogu widzisz stół warsztatowy z narzędziami do tworzenia przedmiotów.")
+
+            use_crafting = input("\nCzy chcesz użyć stacji craftingowej? (t/n): ").strip().lower()
+            if use_crafting in ['t', 'tak']:
+                self.crafting.show_crafting_menu(player)
 
         press_enter()
         return True

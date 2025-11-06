@@ -20,7 +20,12 @@
         "obrazenia": "1d6+2"
       },
       "doswiadczenie": 50,
-      "lup": ["zloto:5-15", "sztylet:20%"],
+      "lup": [
+        "zloto:5-15",
+        "sztylet:20%",
+        "kosci:60%",
+        "skora:40%"
+      ],
       "opis": "Mały, zielonoskóry humanoid o czerwonych oczach i ostrych zębach."
     },
     "wilk": {
@@ -46,7 +51,11 @@
         "atak_w_grupie": "Przewaga gdy atakuje z innym wilkiem"
       },
       "doswiadczenie": 50,
-      "lup": ["zloto:2-8"],
+      "lup": [
+        "zloto:2-8",
+        "skora:80%",
+        "kly:50%"
+      ],
       "opis": "Dziki wilk z szarą sierścią i przenikliwymi żółtymi oczami."
     },
     "szkielet": {
@@ -68,10 +77,18 @@
         "bonus": 4,
         "obrazenia": "1d6+2"
       },
-      "odpornosci": ["trucizna"],
-      "slabosci": ["obuchowa"],
+      "odpornosci": [
+        "trucizna"
+      ],
+      "slabosci": [
+        "obuchowa"
+      ],
       "doswiadczenie": 50,
-      "lup": ["zloto:3-10", "kosciany_pyl:50%"],
+      "lup": [
+        "zloto:3-10",
+        "kosci:90%",
+        "ciemna_esencja:30%"
+      ],
       "opis": "Ożywione kości trzymające stary miecz."
     },
     "ork": {
@@ -94,7 +111,12 @@
         "obrazenia": "1d12+3"
       },
       "doswiadczenie": 100,
-      "lup": ["zloto:10-30", "topor_bojowy:15%"],
+      "lup": [
+        "zloto:10-20",
+        "skora:70%",
+        "kly:40%",
+        "stal:20%"
+      ],
       "opis": "Potężny, zielonoskóry wojownik z ostrymi kłami."
     },
     "ogr": {
@@ -117,7 +139,12 @@
         "obrazenia": "2d6+4"
       },
       "doswiadczenie": 450,
-      "lup": ["zloto:50-150", "miecz_dlugi:30%"],
+      "lup": [
+        "zloto:15-30",
+        "kosci:60%",
+        "skora:60%",
+        "kamien_ostrzacy:30%"
+      ],
       "opis": "Ogromny humanoid o wielkich mięśniach i małej inteligencji."
     },
     "troll": {
@@ -143,9 +170,17 @@
       "specjalne": {
         "regeneracja": "Odzyskuje 10 HP na turę (zatrzymana przez ogień/kwas)"
       },
-      "slabosci": ["ogien", "kwas"],
+      "slabosci": [
+        "ogien",
+        "kwas"
+      ],
       "doswiadczenie": 1800,
-      "lup": ["zloto:100-300", "klejnot:40%"],
+      "lup": [
+        "zloto:20-40",
+        "skora:70%",
+        "esencja_zywiolu:15%",
+        "kamien_ostrzacy:40%"
+      ],
       "opis": "Potężne stworzenie o niesamowitej regeneracji. Brudna zieleń skóry pokryta bliznami."
     },
     "kultista": {
@@ -167,9 +202,16 @@
         "bonus": 3,
         "obrazenia": "1d6+1"
       },
-      "zaklecia": ["mroczny_pocisk"],
+      "zaklecia": [
+        "mroczny_pocisk"
+      ],
       "doswiadczenie": 150,
-      "lup": ["zloto:15-40", "symbol_mrocznego_boga:30%"],
+      "lup": [
+        "zloto:8-15",
+        "ciemna_esencja:50%",
+        "krysztaly_many:40%",
+        "magiczna_runa:15%"
+      ],
       "opis": "Członek mrocznego kultu w kapturze."
     },
     "wampir": {
@@ -196,10 +238,20 @@
         "regeneracja": "Odzyskuje 20 HP na turę",
         "zmiana_formy": "Może się zamienić w nietoperza lub mgłę"
       },
-      "odpornosci": ["nie-magiczne_ataki"],
-      "slabosci": ["swiate_światło", "święcona_woda"],
+      "odpornosci": [
+        "nie-magiczne_ataki"
+      ],
+      "slabosci": [
+        "swiate_światło",
+        "święcona_woda"
+      ],
       "doswiadczenie": 5000,
-      "lup": ["zloto:500-1500", "pradawny_amulet:10%", "klejnot:80%"],
+      "lup": [
+        "zloto:30-50",
+        "krew_demona:40%",
+        "ciemna_esencja:70%",
+        "kamien_duszy:10%"
+      ],
       "opis": "Możny wampir, lord nocy. Blade, alabastrowe oblicze i przenikliwy czerwony wzrok."
     },
     "smok": {
@@ -228,9 +280,17 @@
         "zasieg": "obszar",
         "test_obronny": "zrecznosc"
       },
-      "odpornosci": ["ogien"],
+      "odpornosci": [
+        "ogien"
+      ],
       "doswiadczenie": 10000,
-      "lup": ["zloto:1000-3000", "klejnot:100%", "magiczna_bron:50%"],
+      "lup": [
+        "zloto:100-200",
+        "smocza_luska:100%",
+        "krysztaly_many:80%",
+        "esencja_zywiolu:60%",
+        "mithryl:5%"
+      ],
       "opis": "Majestatyczny młody smok o czerwonych łuskach jak roztopiona lawa. Każdy oddech wypełnia powietrze żarem."
     }
   },
@@ -277,7 +337,14 @@
         }
       },
       "doswiadczenie": 8000,
-      "lup": ["zloto:1000-2000", "laska_mocy:100%", "ksiega_zakleć:100%", "klejnot:100%"],
+      "lup": [
+        "zloto:200-500",
+        "kamien_duszy:100%",
+        "krew_demona:80%",
+        "mithryl:40%",
+        "magiczna_runa:100%",
+        "starozytny_metal:60%"
+      ],
       "opis": "Pradawny czarnoksiężnik spowity w ciemne szaty. Jego oczy płoną nienaturalnym fioletowym blaskiem."
     }
   }
