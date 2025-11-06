@@ -1,0 +1,143 @@
+{
+  "basic_materials": {
+    "skora": {
+      "nazwa": "Skóra",
+      "opis": "Wytrzymała skóra zwierzęca, przydatna do tworzenia zbroi.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 5
+    },
+    "kosci": {
+      "nazwa": "Kości",
+      "opis": "Twarde kości, mogą być użyte do tworzenia broni lub narzędzi.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 3
+    },
+    "kly": {
+      "nazwa": "Kły",
+      "opis": "Ostre kły drapieżnika, idealne do wykończenia broni.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 8
+    },
+    "krysztaly_many": {
+      "nazwa": "Kryształy Many",
+      "opis": "Pulsujące energią magiczną kryształy, używane w enchantingu.",
+      "rzadkosc": "uncommon",
+      "stack_size": 50,
+      "value": 15
+    },
+    "ciemna_esencja": {
+      "nazwa": "Ciemna Esencja",
+      "opis": "Mroczna energia zebrana z nieumarłych.",
+      "rzadkosc": "uncommon",
+      "stack_size": 50,
+      "value": 20
+    },
+    "stal": {
+      "nazwa": "Sztaba Stali",
+      "opis": "Przetopiona stal, podstawowy materiał do kowactwa.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 10
+    },
+    "kamien_ostrzacy": {
+      "nazwa": "Kamień Ostrzący",
+      "opis": "Wysokiej jakości kamień do ostrzenia broni.",
+      "rzadkosc": "common",
+      "stack_size": 50,
+      "value": 5
+    }
+  },
+  "rare_materials": {
+    "smocza_luska": {
+      "nazwa": "Smocza Łuska",
+      "opis": "Niemal niezniszczalna łuska smoka. Ekstremalnie rzadka.",
+      "rzadkosc": "rare",
+      "stack_size": 10,
+      "value": 200
+    },
+    "krew_demona": {
+      "nazwa": "Krew Demona",
+      "opis": "Wrzącca krew demona, niezwykle potężny składnik.",
+      "rzadkosc": "rare",
+      "stack_size": 10,
+      "value": 150
+    },
+    "starozytny_metal": {
+      "nazwa": "Starożytny Metal",
+      "opis": "Metal z dawnej epoki, lżejszy i mocniejszy od stali.",
+      "rzadkosc": "rare",
+      "stack_size": 20,
+      "value": 100
+    },
+    "kamien_duszy": {
+      "nazwa": "Kamień Duszy",
+      "opis": "Zawiera fragment duszy, używany do potężnych enchantów.",
+      "rzadkosc": "rare",
+      "stack_size": 10,
+      "value": 180
+    },
+    "mithryl": {
+      "nazwa": "Sztaba Mithrylu",
+      "opis": "Legendarny metal elfów, niezwykle rzadki i cenny.",
+      "rzadkosc": "legendary",
+      "stack_size": 5,
+      "value": 500
+    }
+  },
+  "herbs": {
+    "ziola_leczace": {
+      "nazwa": "Zioła Leczące",
+      "opis": "Świeże zioła o właściwościach leczniczych.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 3
+    },
+    "grzyby_many": {
+      "nazwa": "Grzyby Many",
+      "opis": "Błękitne grzyby przesycone magią.",
+      "rzadkosc": "uncommon",
+      "stack_size": 50,
+      "value": 8
+    },
+    "trujaca_roza": {
+      "nazwa": "Trująca Róża",
+      "opis": "Piękna ale śmiertelnie trująca roślina.",
+      "rzadkosc": "uncommon",
+      "stack_size": 50,
+      "value": 12
+    },
+    "srebrny_lisc": {
+      "nazwa": "Srebrny Liść",
+      "opis": "Rzadki liść o srebrnym połysku, używany w mocnych eliksirach.",
+      "rzadkosc": "rare",
+      "stack_size": 20,
+      "value": 50
+    }
+  },
+  "components": {
+    "magiczna_runa": {
+      "nazwa": "Magiczna Runa",
+      "opis": "Runa zakodowana zaklęciem wzmocnienia.",
+      "rzadkosc": "uncommon",
+      "stack_size": 20,
+      "value": 40
+    },
+    "kamien_szlif": {
+      "nazwa": "Kamień Szlif",
+      "opis": "Specjalny kamień do szlifowania i ulepszania przedmiotów.",
+      "rzadkosc": "uncommon",
+      "stack_size": 30,
+      "value": 25
+    },
+    "esencja_zywiolu": {
+      "nazwa": "Esencja Żywiołu",
+      "opis": "Skoncentrowana esencja jednego z żywiołów.",
+      "rzadkosc": "rare",
+      "stack_size": 10,
+      "value": 80
+    }
+  }
+}
