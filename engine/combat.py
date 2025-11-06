@@ -173,6 +173,9 @@ class CombatSystem:
             'vulnerable': 0,  # Tury podatności (AC znacznie obniżone)
         }
 
+        # System cooldownu mikstur (bonus action co 3 tury)
+        self.potion_cooldown = 0  # 0 = dostępne, >0 = liczba tur do odczekania
+
     def start_combat(self):
         """
         Rozpoczyna walkę.
@@ -312,45 +315,66 @@ class CombatSystem:
         """Tura gracza."""
         print(f"\n--- Twoja tura ---")
 
-        # Menu akcji
-        actions = ["Atakuj", "Użyj mikstury", "Uciekaj"]
+        # Zmniejsz cooldown mikstur na początku tury
+        if self.potion_cooldown > 0:
+            self.potion_cooldown -= 1
 
-        # Dodaj zaklęcia jeśli postać je ma
-        if self.player.spells and hasattr(self.player, 'mana') and self.player.mana > 0:
-            actions.insert(1, "Rzuć zaklęcie")
+        # Menu akcji - pętla pozwalająca na bonus action (mikstura)
+        turn_ended = False
+        while not turn_ended:
+            # Menu akcji
+            actions = ["Atakuj", "Użyj mikstury", "Uciekaj"]
 
-        # Dodaj aktywne talenty
-        active_talents = self.player.get_active_talents()
-        if active_talents:
-            actions.insert(1, "Użyj umiejętności")
+            # Modyfikuj tekst mikstury bazując na cooldownie
+            if self.potion_cooldown > 0:
+                actions[1] = f"Użyj mikstury (za {self.potion_cooldown} tur)"
+            else:
+                actions[1] = "Użyj mikstury (BONUS ACTION - nie kończy tury)"
 
-        print("\nCo chcesz zrobić?")
-        for i, action in enumerate(actions, 1):
-            print(f"  {i}. {action}")
+            # Dodaj zaklęcia jeśli postać je ma
+            if self.player.spells and hasattr(self.player, 'mana') and self.player.mana > 0:
+                actions.insert(1, "Rzuć zaklęcie")
 
-        while True:
-            try:
-                choice = input("\nWybór: ").strip()
-                choice_num = int(choice)
-                if 1 <= choice_num <= len(actions):
-                    break
-                print(f"Wybierz liczbę od 1 do {len(actions)}!")
-            except ValueError:
-                print("Wprowadź poprawną liczbę!")
+            # Dodaj aktywne talenty
+            active_talents = self.player.get_active_talents()
+            if active_talents:
+                actions.insert(1, "Użyj umiejętności")
 
-        action = actions[choice_num - 1]
+            print("\nCo chcesz zrobić?")
+            for i, action in enumerate(actions, 1):
+                print(f"  {i}. {action}")
 
-        if action == "Atakuj":
-            self.player_attack_menu()
-        elif action == "Użyj umiejętności":
-            self.player_use_talent()
-        elif action == "Rzuć zaklęcie":
-            self.player_cast_spell()
-        elif action == "Użyj mikstury":
-            self.player_use_item()
-        elif action == "Uciekaj":
-            if self.attempt_flee():
-                return True
+            while True:
+                try:
+                    choice = input("\nWybór: ").strip()
+                    choice_num = int(choice)
+                    if 1 <= choice_num <= len(actions):
+                        break
+                    print(f"Wybierz liczbę od 1 do {len(actions)}!")
+                except ValueError:
+                    print("Wprowadź poprawną liczbę!")
+
+            action = actions[choice_num - 1]
+
+            if action == "Atakuj":
+                self.player_attack_menu()
+                turn_ended = True
+            elif action == "Użyj umiejętności":
+                self.player_use_talent()
+                turn_ended = True
+            elif action == "Rzuć zaklęcie":
+                self.player_cast_spell()
+                turn_ended = True
+            elif action.startswith("Użyj mikstury"):
+                # Mikstura to bonus action - nie kończy tury (jeśli udało się użyć)
+                potion_used = self.player_use_item()
+                if potion_used:
+                    print(colored_text("\n💚 Bonus Action użyta! Możesz wykonać jeszcze akcję główną!", 'green'))
+                # Jeśli nie użyto mikstury (anulowano lub cooldown), pozwól wybrać ponownie
+            elif action == "Uciekaj":
+                if self.attempt_flee():
+                    return True
+                turn_ended = True
 
     def player_attack_menu(self):
         """Menu wyboru typu ataku."""
@@ -886,13 +910,19 @@ class CombatSystem:
                     self.monster.take_damage(damage, 'magic')
 
     def player_use_item(self):
-        """Gracz używa przedmiotu."""
+        """Gracz używa przedmiotu (bonus action z cooldownem 3 tury)."""
+        # Sprawdź cooldown
+        if self.potion_cooldown > 0:
+            print_error(f"⏳ Mikstury będą dostępne za {self.potion_cooldown} tur!")
+            print_error("Używanie mikstur wymaga czasu - możesz użyć ich co 3 tury.")
+            return False
+
         # Znajdź mikstury
         potions = [item for item in self.player.inventory if item.get('typ') == 'mikstura']
 
         if not potions:
             print_error("Nie masz żadnych mikstur!")
-            return
+            return False
 
         print("\n--- Twoje mikstury ---")
         for i, potion in enumerate(potions, 1):
@@ -901,18 +931,25 @@ class CombatSystem:
         try:
             choice = int(input("\nWybierz miksturę (0 aby anulować): "))
             if choice == 0:
-                return
+                return False
             if 1 <= choice <= len(potions):
                 potion = potions[choice - 1]
                 success, message = self.player.use_item(potion)
                 if success:
                     print_success(message)
+                    # Ustaw cooldown na 3 tury
+                    self.potion_cooldown = 3
+                    print(colored_text("⏳ Następna mikstura będzie dostępna za 3 tury.", 'yellow'))
+                    return True
                 else:
                     print_error(message)
+                    return False
             else:
                 print_error("Nieprawidłowy wybór!")
+                return False
         except ValueError:
             print_error("Wprowadź poprawną liczbę!")
+            return False
 
     def monster_turn(self):
         """Tura potwora."""
