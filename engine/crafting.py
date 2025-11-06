@@ -103,7 +103,7 @@ class CraftingSystem:
         # Wyświetl przepisy
         print("\nDostępne przepisy:")
         for i, (recipe_id, recipe_data, category) in enumerate(craft_recipes, 1):
-            can_craft = self.can_craft(player, recipe_data)
+            can_craft, reason = self.can_craft(player, recipe_data)
             status = colored_text("✓", 'green') if can_craft else colored_text("✗", 'red')
             print(f"  {i}. {status} {recipe_data['nazwa']}")
 
@@ -132,23 +132,25 @@ class CraftingSystem:
             recipe: Dane przepisu
 
         Returns:
-            bool: True jeśli może skraftować
+            tuple: (bool, str) - (czy może skraftować, powód jeśli nie może)
         """
         # Sprawdź poziom
-        if 'wymagany_poziom' in recipe and player.level < recipe['wymagany_poziom']:
-            return False
+        if 'min_level' in recipe and player.level < recipe['min_level']:
+            return False, f"Wymagany poziom: {recipe['min_level']}"
 
         # Sprawdź złoto
-        if player.gold < recipe.get('koszt_zlota', 0):
-            return False
+        cost = recipe.get('koszt_zlota', 0)
+        if player.gold < cost:
+            return False, f"Brak złota (potrzeba: {cost}, masz: {player.gold})"
 
         # Sprawdź materiały
         materials = recipe.get('materialy', {})
         for material_id, required_amount in materials.items():
             if not self.has_material(player, material_id, required_amount):
-                return False
+                current = self.get_material_count(player, material_id)
+                return False, f"Brak materiału: {material_id} (potrzeba: {required_amount}, masz: {current})"
 
-        return True
+        return True, "OK"
 
     def has_material(self, player, material_id, amount):
         """
@@ -162,13 +164,24 @@ class CraftingSystem:
         Returns:
             bool: True jeśli ma wystarczająco
         """
-        # Materiały są trzymane w inventory jako items
+        return self.get_material_count(player, material_id) >= amount
+
+    def get_material_count(self, player, material_id):
+        """
+        Zwraca ilość materiału w ekwipunku gracza.
+
+        Args:
+            player: Obiekt gracza
+            material_id: ID materiału
+
+        Returns:
+            int: Ilość materiału
+        """
         count = 0
         for item in player.inventory:
             if item.get('id') == material_id:
-                count += item.get('stack', 1)
-
-        return count >= amount
+                count += item.get('quantity', item.get('stack', 1))
+        return count
 
     def consume_materials(self, player, materials):
         """
@@ -239,20 +252,21 @@ class CraftingSystem:
             print(f"\n{status} Koszt: {cost} złota (masz: {player.gold})")
 
         # Sprawdź czy może skraftować
-        if not self.can_craft(player, recipe):
-            print_error("\nNie masz wystarczających zasobów!")
-            return
+        can_craft, reason = self.can_craft(player, recipe)
+        if not can_craft:
+            print_error(f"\nNie możesz tego skraftować: {reason}")
+            return False, reason
 
         # Potwierdź
         confirm = input("\nCzy chcesz skraftować ten przedmiot? (t/n): ").strip().lower()
         if confirm != 't':
             print_warning("Anulowano.")
-            return
+            return False, "Anulowano"
 
         # Konsumuj zasoby
         if not self.consume_materials(player, materials):
             print_error("Błąd przy konsumowaniu materiałów!")
-            return
+            return False, "Błąd przy konsumowaniu materiałów"
 
         player.gold -= cost
 
@@ -263,11 +277,15 @@ class CraftingSystem:
             item = self.load_item_from_db(result['id'])
             if item:
                 player.add_item(item)
-                print_success(f"\n✓ Wytworzono: {item.get('nazwa', 'Przedmiot')}!")
+                item_name = item.get('nazwa', 'Przedmiot')
+                print_success(f"\n✓ Wytworzono: {item_name}!")
+                return True, f"Wytworzono: {item_name}"
         else:
             # Bezpośrednio z przepisu
             player.add_item(result)
-            print_success(f"\n✓ Wytworzono: {result.get('nazwa', 'Przedmiot')}!")
+            item_name = result.get('nazwa', 'Przedmiot')
+            print_success(f"\n✓ Wytworzono: {item_name}!")
+            return True, f"Wytworzono: {item_name}"
 
     def load_item_from_db(self, item_id):
         """Ładuje przedmiot z bazy danych items.json."""
@@ -336,27 +354,27 @@ class CraftingSystem:
 
         press_enter()
 
-    def upgrade_item(self, player, item):
+    def upgrade_item(self, player, item, recipe=None):
         """Ulepsza przedmiot."""
-        current_level = item.get('poziom_upgrade', 0)
+        current_level = item.get('poziom_upgrade', item.get('upgrade_level', 0))
 
         if current_level >= 3:
             print_error("Ten przedmiot jest już maksymalnie ulepszony (+3)!")
-            return
+            return False, "Przedmiot jest już maksymalnie ulepszony"
 
-        # Znajdź odpowiedni przepis upgrade
-        item_type = item['typ']
-        recipe_key = f"{item_type}_plus_{current_level + 1}"
+        # Znajdź odpowiedni przepis upgrade jeśli nie podano
+        if not recipe:
+            item_type = item['typ']
+            recipe_key = f"{item_type}_plus_{current_level + 1}"
 
-        recipe = None
-        if item_type == 'bron':
-            recipe = self.recipes.get('weapon_upgrades', {}).get(f"miecz_plus_{current_level + 1}")
-        elif item_type == 'zbroja':
-            recipe = self.recipes.get('armor_upgrades', {}).get(f"zbroja_plus_{current_level + 1}")
+            if item_type == 'bron':
+                recipe = self.recipes.get('weapon_upgrades', {}).get(f"miecz_plus_{current_level + 1}")
+            elif item_type == 'zbroja':
+                recipe = self.recipes.get('armor_upgrades', {}).get(f"zbroja_plus_{current_level + 1}")
 
         if not recipe:
             print_error("Brak przepisu na upgrade tego przedmiotu!")
-            return
+            return False, "Brak przepisu na upgrade"
 
         print_separator("-")
         print(f"⬆️  {recipe['nazwa']}")
@@ -378,30 +396,38 @@ class CraftingSystem:
             print(f"\n{status} Koszt: {cost} złota (masz: {player.gold})")
 
         # Sprawdź czy może ulepszyć
-        if not self.can_craft(player, recipe):
-            print_error("\nNie masz wystarczających zasobów!")
-            return
+        can_craft, reason = self.can_craft(player, recipe)
+        if not can_craft:
+            print_error(f"\nNie możesz tego ulepszyć: {reason}")
+            return False, reason
+
+        # Sprawdź poziom progresywny
+        target_level = recipe.get('poziom_upgrade', current_level + 1)
+        if target_level > current_level + 1:
+            return False, f"Musisz najpierw ulepszyć do +{current_level + 1}"
 
         # Potwierdź
         confirm = input("\nCzy chcesz ulepszyć ten przedmiot? (t/n): ").strip().lower()
         if confirm != 't':
             print_warning("Anulowano.")
-            return
+            return False, "Anulowano"
 
         # Konsumuj zasoby
         if not self.consume_materials(player, materials):
             print_error("Błąd przy konsumowaniu materiałów!")
-            return
+            return False, "Błąd przy konsumowaniu materiałów"
 
         player.gold -= cost
 
         # Ulepsz przedmiot
         efekt = recipe['efekt']
         item['poziom_upgrade'] = current_level + 1
+        item['upgrade_level'] = current_level + 1  # Alternatywny klucz
 
         # Aplikuj bonusy
         if 'bonus_obrazen' in efekt:
-            bonus = int(efekt['bonus_obrazen'])
+            bonus_str = str(efekt['bonus_obrazen']).strip('+')
+            bonus = int(bonus_str)
             # Parsuj obecne obrażenia i dodaj bonus
             current_dmg = item.get('obrazenia', '1d6')
             # Prosta implementacja - dodaj +X do końca
@@ -425,7 +451,9 @@ class CraftingSystem:
         # Zwiększ wartość
         item['wartosc'] = int(item.get('wartosc', 100) * 1.5)
 
-        print_success(f"\n✓ Ulepszono przedmiot do {item['nazwa']}!")
+        item_name = item['nazwa']
+        print_success(f"\n✓ Ulepszono przedmiot do {item_name}!")
+        return True, f"Ulepszono przedmiot do {item_name}"
 
     def enchant_item_menu(self, player):
         """Menu enchantowania."""
