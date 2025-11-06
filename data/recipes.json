@@ -43,6 +43,7 @@
       "nazwa": "Ulepsz Miecz do +3",
       "opis": "Maksymalne wzmocnienie broni. Wymaga broni +2.",
       "kategoria": "upgrade",
+      "min_level": 10,
       "wymagany_typ_bazowy": "bron",
       "wymagany_poziom_upgrade": 2,
       "poziom_upgrade": 3,

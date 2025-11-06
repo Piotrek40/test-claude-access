@@ -95,6 +95,13 @@
       "stack_size": 99,
       "value": 3
     },
+    "woda": {
+      "nazwa": "Czysta Woda",
+      "opis": "Czysta woda źródlana, niezbędna do tworzenia mikstur.",
+      "rzadkosc": "common",
+      "stack_size": 99,
+      "value": 1
+    },
     "grzyby_many": {
       "nazwa": "Grzyby Many",
       "opis": "Błękitne grzyby przesycone magią.",
