@@ -1,0 +1,307 @@
+{
+  "theron_campfire": {
+    "companion": "theron",
+    "scene_id": "campfire_vulnerability",
+    "title": "Pod Gwiezdnym Niebem",
+    "requirements": {
+      "approval_min": 41,
+      "location": "camp",
+      "story_flags_required": ["left_ironkeep"],
+      "story_flags_forbidden": ["theron_romance_locked"]
+    },
+    "description": "Wieczór po trudnej walce. Obóz jest cichy, tylko ogień trzeszczy. Theron siedzi samotnie, wpatrując się w płomienie.",
+    "narration": [
+      {
+        "type": "description",
+        "text": "Noc spowijała obóz. Reszta drużyny śpi, wyczerp ana dzisiejszą walką. Tylko ty i Theron jesteście czuwający przy dogasającym ogniu."
+      },
+      {
+        "type": "description",
+        "text": "Paladyn siedzi po drugiej stronie płomieni, wciąż w zbroi mimo późnej pory. Jego złota zbroja odbija światło ognia, tworząc tańczące cienie na jego twarzy. Wygląda na... zmęczonego. Nie fizycznie - to coś głębszego."
+      },
+      {
+        "type": "description",
+        "text": "Po długiej chwili ciszy, odzywa się, nie podnosząc wzroku znad ognia."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "Theron",
+        "text": "Nie śpisz?"
+      },
+      {
+        "type": "choice",
+        "options": [
+          {
+            "text": "Nie mogę przestać myśleć o dzisiejszej walce.",
+            "response": "theron_response_battle",
+            "approval_change": 2
+          },
+          {
+            "text": "Widziałem że ty też nie śpisz. Wszystko w porządku?",
+            "response": "theron_response_concern",
+            "approval_change": 5
+          },
+          {
+            "text": "Za dużo na głowie. A ty?",
+            "response": "theron_response_mutual",
+            "approval_change": 3
+          }
+        ]
+      }
+    ],
+    "responses": {
+      "theron_response_concern": [
+        {
+          "type": "description",
+          "text": "Jego oczy na moment spotykają twoje, i widzisz w nich coś czego nie widziałeś wcześniej - wdzięczność. I vulnerability."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*cichy uśmiech* Zawsze dbasz o innych, prawda? Nawet o takich jak ja, którzy powinni być wystarczająco silni by radzić sobie sami."
+        },
+        {
+          "type": "description",
+          "text": "Przez moment milczy, walcząc z czymś wewnątrz. Potem, jakby podjął decyzję, zdejmuje hełm i odkłada go obok. Jego ciemne włosy są rozczochrane, twarz zmęczona."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Prawda jest taka, że... nie. Nie wszystko w porządku. I nie było od bardzo, bardzo dawna."
+        },
+        {
+          "type": "description",
+          "text": "Jego guard opada. Po raz pierwszy widzisz go nie jako Paladyn-Commandera, symbol nadziei Kościoła, ale jako... człowieka. Zmęczonego, samotnego człowieka."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Wiesz co to znaczy być... symbolem? Nie osobą, tylko symbolem? Od kiedy podniosłem Dawnblade, wszyscy patrzą na mnie jak na znak od bogów. 'Wybrany'. 'Zbawiciel'. 'Nadzieja Valdorii'."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*gorzki śmiech* Ale bogowie milczą. I ja... ja nie wiem co robię. Udaję. Każdego dnia udaję że wiem, że mam pewność, że jestem godny tego miecza."
+        },
+        {
+          "type": "description",
+          "text": "Jego głos pęka lekko."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "A najgorsza część? Nie mogę się nikomu przyznać. Kapłani, paladyni, ludzie - wszyscy potrzebują wierzyć że jestem pewny siebie. Jeśli zobaczą że wątpię, że się boję..."
+        },
+        {
+          "type": "description",
+          "text": "Uryw a, wpatrując się w ogień. Widzisz wilgoć w jego oczach, którą desperacko próbuje ukryć."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Przepraszam. Nie powinienem... to nie fair wobec ciebie. Ty masz własne problemy."
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "*Podchodzisz i siadasz obok niego* Nie przepraszaj. Jestem tu dla ciebie.",
+              "response": "theron_comfort_physical",
+              "approval_change": 10,
+              "flags_added": ["theron_campfire_comfort"]
+            },
+            {
+              "text": "Nie jesteś sam. Nie musisz udawać przy mnie.",
+              "response": "theron_comfort_verbal",
+              "approval_change": 8,
+              "flags_added": ["theron_campfire_comfort"]
+            },
+            {
+              "text": "Twoje wątpliwości nie czynią cię słabszym. Czynią cię człowiekiem.",
+              "response": "theron_comfort_philosophical",
+              "approval_change": 7,
+              "flags_added": ["theron_campfire_comfort"]
+            }
+          ]
+        }
+      ],
+      "theron_comfort_physical": [
+        {
+          "type": "description",
+          "text": "Wstajesz i okrążasz ogień, siadając obok niego. Czujesz ciepło bijące od jego zbroi, zapach dymu i metalu. Jest tak blisko."
+        },
+        {
+          "type": "description",
+          "text": "Theron patrzy na ciebie ze zdziwieniem, jakby nie spodziewał się że ktokolwiek chciałby być tak blisko. Przez moment widzisz czysty vulnerability w jego oczach."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*szeptem* Ty... nie boisz się mnie? Mojej słabości?"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "*Bierzesz jego dłoń* Widzę tylko człowieka. Dobrego człowieka.",
+              "response": "theron_hand_hold",
+              "approval_change": 15,
+              "flags_added": ["theron_campfire_intimate"]
+            },
+            {
+              "text": "Jedyna rzecz której się boję to że będziesz musiał przez to przechodzić sam.",
+              "response": "theron_reassurance",
+              "approval_change": 12
+            }
+          ]
+        }
+      ],
+      "theron_hand_hold": [
+        {
+          "type": "description",
+          "text": "Jego dłoń jest ciepła, lekko drżąca. Ma modzele od miecza, ale jego dotyk jest gentle. Patrzy na wasze złączone dłonie jak na cud."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*głos łamie się* Nikt... nikt nigdy nie..."
+        },
+        {
+          "type": "description",
+          "text": "Nie kończy. Zamiast tego, ściska twoją dłoń mocniej, jakby bał się że znikniesz. Widzisz łzy spływające po jego twarzy, które już nie próbuje ukrywać."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Od śmierci moich... od kiedy byłem dzieckiem, nikt nie trzymał mnie za rękę. Nikt nie dotykał mnie bez... bez ceremonii, bez formalności. Jestem Paladyn-Commanderem. Jestem... nietykany."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*patrzy ci w oczy* Ale gdy jesteś tu... czuję się po prostu... Theronem. Nie symbolem. Nie wybranym. Tylko... mną."
+        },
+        {
+          "type": "description",
+          "text": "Moment między wami jest naładowany czymś więcej niż przyjaźnią. Powietrze zmieniło się. Jego oczy, złote w blasku ognia, patrzą na ciebie z intensywnością która sprawia że serce bije ci szybciej."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*szeptem* Ja... nie powinienem... ale..."
+        },
+        {
+          "type": "description",
+          "text": "Jego wolna ręka powoli, niepewnie, podnosi się do twojej twarzy. Dotyk jest delikatny, pytający. Jego kciuk przesuwa się po twoim policzku."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Powiedz mi że to tylko ja czuję... to co między nami. Powiedz mi że się mylę, a przestanę. Ale jeśli ty też..."
+        },
+        {
+          "type": "description",
+          "text": "Jego głos cichnie. Czeka. Wszystkie walls which zbudował przez lata są opuszczone. Jest całkowicie vulnerable. Otwarty. Twój."
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "*Przybliżasz się, kładąc rękę na jego twarzy* Nie tylko ty...",
+              "response": "theron_almost_kiss",
+              "approval_change": 20,
+              "flags_added": ["theron_romance_beginning", "theron_mutual_feelings"],
+              "romance_stage_update": "romantic_interest"
+            },
+            {
+              "text": "*Delikatnie odsuwasz się* Theron... ty jesteś wyjątkowy dla mnie, ale... muszę być pewny.",
+              "response": "theron_gentle_rejection",
+              "approval_change": 5,
+              "flags_added": ["theron_feelings_acknowledged"]
+            },
+            {
+              "text": "*Milczysz, pozwalając moment mówić za ciebie*",
+              "response": "theron_silent_acceptance",
+              "approval_change": 15,
+              "flags_added": ["theron_unspoken_bond"]
+            }
+          ]
+        }
+      ],
+      "theron_almost_kiss": [
+        {
+          "type": "description",
+          "text": "Twoja ręka znajduje jego twarz, i on zamyka oczy przy tym dotyku, jakby to było najbardziej cenną rzeczą którą kiedykolwiek otrzymał."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*szept, łamiący się* Oh... oh, bogowie..."
+        },
+        {
+          "type": "description",
+          "text": "Przybliża się powoli, dając ci czas by się wycofać. Ale ty nie uciekasz. Jego czoło dotyka twojego, oddech miesza się z twoim. Jesteście centymetry od siebie."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*głos drży* Ja... nigdy... To jest..."
+        },
+        {
+          "type": "description",
+          "text": "I wtedy, bardzo delikatnie, jego wargi dotykają twoich."
+        },
+        {
+          "type": "description",
+          "text": "Pocałunek jest gentle, pytający, pełen lat samotności i desperackiej potrzeby połączenia. Jego ręka wplata się w twoje włosy, druga obejmuje twoją talię, ciągnąc cię bliżej. Całuje cię jakbyś był ostatnim źródłem światła w ciemności."
+        },
+        {
+          "type": "description",
+          "text": "Gdy się rozdziela cie, oboje dyszycie ciężko. Jego oczy są szeroko otwarte, pełne wonder i strachu i nadziei."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*łapiąc oddech* Ja... przepraszam, ja nie... to było..."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*patrzy ci głęboko w oczy* ...doskonałe. To było doskonałe."
+        },
+        {
+          "type": "description",
+          "text": "Uśmiecha się - pierwszy prawdziwy, szczęśliwy uśmiech który od niego widziałeś. Wygląda młodo, wolny, alive."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "Nie wiem co to znaczy. Nie wiem co robimy. Ale... *ściska twoją dłoń* ...chcę to odkryć. Z tobą."
+        },
+        {
+          "type": "description",
+          "text": "Spędzacie resztę nocy siedząc razem, jego ramię wokół ciebie, twoja głowa na jego ramieniu, patrząc jak ogień powoli gaśnie. Nie potrzebujecie więcej słów. W tej chwili, wszystko jest perfect."
+        },
+        {
+          "type": "description",
+          "text": "Gdy w końcu idziecie spać, jego ostatnie słowa na tę noc to:"
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Theron",
+          "text": "*szeptem* Dziękuję. Za to że pozwoliłeś mi być... po prostu sobą."
+        },
+        {
+          "type": "description",
+          "text": "[KONIEC SCENY - Romance z Theronem rozpoczęty]"
+        },
+        {
+          "type": "system",
+          "text": "THERON ROMANCE UNLOCKED\nRelationship Stage: Romantic Interest\nApproval: +20\nNew scenes available: Morning After, Training Together, Confession to Church"
+        }
+      ]
+    },
+    "approval_requirement_check": "Scena wymaga minimum 41 approval. Gracz musi pokazać Theronowi honor i zrozumienie w poprzednich interakcjach.",
+    "flags_set_on_completion": ["theron_campfire_completed", "theron_romance_path_available"],
+    "follow_up_scenes": ["theron_morning_after", "theron_training_together"]
+  }
+}
