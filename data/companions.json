@@ -1,0 +1,295 @@
+{
+  "mira": {
+    "nazwa": "Mira",
+    "opis": "Młoda wojowniczka ze Starfall. Silna, lojalna i pełna determinacji by chronić swoją wioskę i rodzinę.",
+    "klasa": "Wojownik",
+    "osobowosc": "Odważna, pragmatyczna, lojalna. Nie lubi pięknych słów - woli czyny.",
+    "romance": true,
+    "gender": "female",
+    "poziom": 2,
+    "hp": 25,
+    "kp": 16,
+    "bonus_ataku": 5,
+    "obrazenia": "1d8+3",
+    "atrybuty": {
+      "sila": 16,
+      "zrecznosc": 14,
+      "kondycja": 15,
+      "inteligencja": 10,
+      "madrosc": 12,
+      "charyzma": 11
+    },
+    "umiejetnosci_specjalne": [
+      "shield_bash",
+      "protective_strike"
+    ],
+    "moze_odejsc": false,
+    "lubi": [
+      "bravery",
+      "protecting_family",
+      "pragmatism",
+      "honesty"
+    ],
+    "nie_lubi": [
+      "cowardice",
+      "betrayal",
+      "risking_innocent",
+      "unnecessary_cruelty"
+    ],
+    "historia": "Mira dorastała w Starfall, trenując z ojcem - byłym żołnierzem. Gdy dziwne rzeczy zaczęły się dziać w wiosce, postanowiła działać zamiast czekać na pomoc.",
+    "arc_progression": {
+      "act1": "Poznaje gracza, uczy się mu ufać. Pragnie chronić wioskę.",
+      "act2": "Rozwija się jako wojowniczka. Romance możliwy jeśli gracz pokazał odwagę.",
+      "act3": "Albo staje się legendą, albo ginie chroniąc innych."
+    }
+  },
+
+  "theron": {
+    "nazwa": "Theron Dawnshield",
+    "opis": "Paladyn Kościoła Wiecznego Płomienia. Honorowy, odważny, ale samotny. Jedyny żywy człowiek który może podnieść Dawnblade - miecz boga Solariusa.",
+    "klasa": "Paladyn",
+    "osobowosc": "Lawful Good. Honor, duty, kindness. Secretly struggles with loneliness and rigid expectations of the Church.",
+    "romance": true,
+    "gender": "male",
+    "poziom": 5,
+    "hp": 48,
+    "kp": 18,
+    "bonus_ataku": 7,
+    "obrazenia": "1d10+4",
+    "atrybuty": {
+      "sila": 17,
+      "zrecznosc": 12,
+      "kondycja": 16,
+      "inteligencja": 11,
+      "madrosc": 14,
+      "charyzma": 16
+    },
+    "umiejetnosci_specjalne": [
+      "lay_on_hands",
+      "divine_smite",
+      "aura_of_protection"
+    ],
+    "moze_odejsc": true,
+    "lubi": [
+      "honor",
+      "protecting_innocent",
+      "mercy",
+      "understanding",
+      "standing_for_what_is_right"
+    ],
+    "nie_lubi": [
+      "lies",
+      "cruelty",
+      "heresy",
+      "betrayal_of_trust",
+      "abandoning_those_in_need"
+    ],
+    "historia": "Sierota wychowany przez Kościół. Od dzieciństwa trenował by być paladynem. 10 lat temu podniósł Dawnblade - pierwszy od 300 lat. Ludzie wierzą że to znak od bogów. Czuje ogromną presję by być doskonały, ale w środku jest samotny i wątpiący.",
+    "arc_progression": {
+      "act1": "Spotyka gracza w Ironkeep. Formal, professional. Dołącza by zbadać Artefakt.",
+      "act2": "Otwiera się przy graczu. Konflikt między duty a uczuciami. Romance możliwy - ale Kościół nie aprobuje.",
+      "act3": "Musi wybrać: Kościół czy gracz. Może zrezygnować z Kościoła dla miłości, lub umrzeć jako męczennik."
+    },
+    "romance_arc": {
+      "stage_1": "Formalny, zdystansowany. Gracz musi pokazać honor i odwagę.",
+      "stage_2": "Campfire scene - otwiera się, pokazuje vulnerab ility.",
+      "stage_3": "Przyznaje się do uczuć. 'I nie powinienem... ale nie mogę przestać o tobie myśleć.'",
+      "stage_4": "First kiss - po walce, adrenaline moment.",
+      "stage_5": "Konfrontacja z Kościołem. Choice: ukrywać związek czy być otwartym?",
+      "stage_6": "Ending: Happy (rezygnuje z Kościoła, freedom), Bittersweet (stays but together in secret), Tragic (umiera dla gracza)"
+    },
+    "dialogue_snippets": {
+      "greeting": "Witaj. Solarius świeci na ciebie dzisiaj... przynajmniej chciałbym w to wierzyć.",
+      "camp_casual": "Czasem zastanawiam się czy... czy wszystko to ma sens. Przepraszam, nie powinienem wątpić.",
+      "romance_hint": "Kiedy jestem z tobą, czuję się... inny. Jakby mogłem być po prostu Theronem, nie Paladyn-Commanderem.",
+      "combat": "Za twoje życie oddam swoje! Do mnie!",
+      "approval_high": "Jesteś... wyjątkowy. Nie spotkałem nikogo takiego jak ty.",
+      "approval_low": "Nie zgadzam się z twoimi wyborami. Mam nadzieję że znajdziesz właściwą ścieżkę."
+    }
+  },
+
+  "seraph": {
+    "nazwa": "Seraph",
+    "opis": "Zagadkowy assassin z Orkdenu Nowego Świtu. Charyzmatyczny, niebezpieczny, i desperacko szukający czegoś wartego walki. Używa tylko jednego imienia.",
+    "klasa": "Łotrzyk/Assassin",
+    "osobowosc": "Chaotic Good. Passionate, damaged, protective. Flirtuje jawnie ale ma trust issues.",
+    "romance": true,
+    "gender": "male",
+    "poziom": 6,
+    "hp": 42,
+    "kp": 15,
+    "bonus_ataku": 8,
+    "obrazenia": "1d6+4 (+ sneak attack 3d6)",
+    "atrybuty": {
+      "sila": 12,
+      "zrecznosc": 18,
+      "kondycja": 14,
+      "inteligencja": 13,
+      "madrosc": 10,
+      "charyzma": 16
+    },
+    "umiejetnosci_specjalne": [
+      "sneak_attack",
+      "evasion",
+      "shadow_step"
+    ],
+    "moze_odejsc": true,
+    "lubi": [
+      "freedom",
+      "rebellion",
+      "protecting_him",
+      "physical_affection",
+      "honesty",
+      "standing_up_to_him"
+    ],
+    "nie_lubi": [
+      "authority",
+      "church",
+      "lies",
+      "pity",
+      "being_controlled"
+    ],
+    "historia": "Przeszłość nieznana - refuses to talk about it. Dołączył do Orkdenu 5 lat temu. Jest częścią Red Hand (elitarni assassins). Ma wiele blizn, fizycznych i emocjonalnych. Szuka czegoś - może kogoś - wartego walki.",
+    "arc_progression": {
+      "act1": "Nie pojawia się (jeszcze nie go nie ma)",
+      "act2": "Spotyka gracza w slumsach Lumendal. Flirtuje aggressive. Tests czy gracz jest worth it.",
+      "act3": "Vulnerability - pokazuje prawdziwą twarz. Romance climax. Może umrzeć w rewolucji lub uciec z graczem."
+    },
+    "romance_arc": {
+      "stage_1": "Flirtuje od pierwszego spotkania. 'Well, aren't you interesting...'",
+      "stage_2": "Tests gracza - czy jest silny enough, czy go brave enough.",
+      "stage_3": "Fire in the Dark scene - ratuje gracza, aggressive kiss.",
+      "stage_4": "Behind the Mask - pokazuje blizny (literal i emotional), płacze.",
+      "stage_5": "Burn Together - passionate confession. 'I can't lose you. Not again.'",
+      "stage_6": "Ending: Happy (ucieczka razem), Bittersweet (pozostaje w Orkden), Tragic (umiera w walce)"
+    },
+    "dialogue_snippets": {
+      "greeting": "Well, well... look who it is. Miss me already?",
+      "camp_casual": "You know, most people are afraid of me. But not you. Why is that?",
+      "romance_hint": "*leans close* You're playing a dangerous game, getting close to someone like me.",
+      "flirt": "Careful. Keep looking at me like that and I might get ideas.",
+      "combat": "Stay behind me. This is what I do best.",
+      "approval_high": "*touches your face gently* You're mine. And I protect what's mine.",
+      "approval_low": "You're disappointing me. I expected... more."
+    }
+  },
+
+  "pyrus": {
+    "nazwa": "Pyrus Flameheart",
+    "opis": "Potężny mag ognia z Arcane Spire. Geniusz, obsessed z mocą i zniszczeniem. Fascynujący i terrifying jednocześnie.",
+    "klasa": "Mag (Fire Specialist)",
+    "osobowosc": "Chaotic Neutral (leaning Evil). Obsessive, possessive, brilliant, dangerous.",
+    "romance": true,
+    "gender": "male",
+    "poziom": 7,
+    "hp": 35,
+    "kp": 12,
+    "bonus_ataku": 3,
+    "obrazenia": "Fire spells (varies)",
+    "atrybuty": {
+      "sila": 8,
+      "zrecznosc": 14,
+      "kondycja": 12,
+      "inteligencja": 19,
+      "madrosc": 10,
+      "charyzma": 15
+    },
+    "umiejetnosci_specjalne": [
+      "fireball",
+      "flame_shield",
+      "incinerate",
+      "phoenix_resurrection"
+    ],
+    "moze_odejsc": true,
+    "lubi": [
+      "power",
+      "ambition",
+      "intelligence",
+      "standing_up_to_him",
+      "understanding_his_pain",
+      "destruction"
+    ],
+    "nie_lubi": [
+      "weakness",
+      "hesitation",
+      "boring_morality",
+      "being_ignored",
+      "restraint"
+    ],
+    "historia": "Prodigy który dołączył do Zmierzchłych w wieku 16. Teraz 35, jest jednym z najpotężniejszych magów żyjących. Obsessed z odkryciem prawdy o bogach - i z przejęciem ich mocy. Ma dark past który refuses to share.",
+    "arc_progression": {
+      "act1": "Nie pojawia się",
+      "act2": "Spotyka gracza w Arcane Spire. Instantly fascinated. 'You... intrigue me.'",
+      "act3": "Obsession peak. Może być redeemed (trudne) lub embrace darkness together."
+    },
+    "romance_arc": {
+      "stage_1": "Fascination, not love. Studies gracza like experiment.",
+      "stage_2": "You Fascinate Me - obsessive interest. Possessive behaviors.",
+      "stage_3": "Mine - jealousy, control attempts. Not healthy but passionate.",
+      "stage_4": "Vulnerability - shows why he's like this (trauma, abuse w przeszłości).",
+      "stage_5": "Burn With Me - ultimate choice: redeem him lub fall into darkness together.",
+      "stage_6": "Ending: Redemption (gracz go 'fixes', becomes better), Dark (together rule/destroy), Tragic (consumes himself)"
+    },
+    "dialogue_snippets": {
+      "greeting": "Ah. You've returned. How... convenient.",
+      "camp_casual": "Power is the only truth. Everything else is illusion.",
+      "romance_hint": "I find myself thinking of you. Constantly. It's... distracting.",
+      "possessive": "Who was that? Why were they touching you?",
+      "vulnerable": "*quietly* Sometimes I wonder if I'm even capable of... feeling. Truly feeling.",
+      "combat": "Burn. BURN!",
+      "approval_high": "You're mine. Say it.",
+      "approval_low": "You bore me. Perhaps I was wrong about you."
+    }
+  },
+
+  "morwen": {
+    "nazwa": "Morwen the Pale",
+    "opis": "Nekromantka ze Shadowfen. Mysterious, philosophical, surprisingly gentle. Seeks to understand death, not desecrate it.",
+    "klasa": "Nekromantka",
+    "osobowosc": "Neutral Good. Philosophical, gentle, misunderstood. Views death as natural part of life.",
+    "romance": true,
+    "gender": "female",
+    "poziom": 6,
+    "hp": 38,
+    "kp": 13,
+    "bonus_ataku": 4,
+    "obrazenia": "Necromancy spells (varies)",
+    "atrybuty": {
+      "sila": 9,
+      "zrecznosc": 12,
+      "kondycja": 14,
+      "inteligencja": 17,
+      "madrosc": 16,
+      "charyzma": 13
+    },
+    "umiejetnosci_specjalne": [
+      "animate_dead",
+      "speak_with_dead",
+      "life_drain",
+      "death_ward"
+    ],
+    "moze_odejsc": false,
+    "lubi": [
+      "knowledge",
+      "respect_for_dead",
+      "philosophical_talks",
+      "understanding",
+      "not_fearing_her"
+    ],
+    "nie_lubi": [
+      "ignorance",
+      "fear_of_death",
+      "desecration",
+      "judging_her"
+    ],
+    "historia": "Morwen studiowała nekromancję nie dla mocy, ale by zrozumieć śmierć. Mieszka w Shadowfen, prowadząc research. Od Silence, duchy powstają spontanicznie - ona stara się im pomóc przejść dalej.",
+    "arc_progression": {
+      "act1": "Nie pojawia się (optional w Shadowfen later)",
+      "act2": "Spotyka gracza w Shadowfen. Oferuje wiedzę o śmierci i bogach.",
+      "act3": "Może offer lichdom (immortality ale at cost). Philosophy końca."
+    },
+    "romance_arc": {
+      "note": "Optional, bonus content. Dla graczy którzy eksplorują Shadowfen."
+    }
+  }
+}

@@ -81,6 +81,65 @@ class Character:
         self.talent_cooldowns = {}  # Cooldowny aktywnych talentów {talent_id: pozostałe_tury}
         self.talent_buffs = {}  # Aktywne buffy z talentów {buff_name: remaining_turns}
 
+        # System reputacji frakcji (-100 do 100)
+        self.reputation = {
+            'kosciol': 0,      # Kościół Wiecznego Płomienia
+            'orkden': 0,       # Orkden Nowego Świtu
+            'zmierzchli': 0,   # Zmierzchli
+            'starfall': 50,    # Wioska Starfall (zaczynamy jako resident)
+            'nobility': 0,     # Arystokracja (minor)
+            'merchants': 0     # Gildia Kupiecka (minor)
+        }
+
+        # Tracking głównych wyborów (dla endings i consequences)
+        self.major_choices = {}  # {choice_id: selected_option}
+
+        # Flags dla questów i eventów
+        self.story_flags = set()  # Set stringów np. 'starfall_evacuated', 'cassian_redeemed'
+
+        # Companioni
+        self.companions = []  # Lista companion IDs którzy dołączyli
+        self.active_party = []  # Lista companion IDs w aktywnej drużynie (max 3)
+
+        # System romansów
+        self.romances = {
+            'theron': {
+                'approval': 0,           # 0-100
+                'romance_active': False,  # Czy romance się zaczął
+                'romance_locked': False,  # Czy zablokowany (wybrano kogoś innego)
+                'scenes_unlocked': [],   # Lista scene IDs które odblokowano
+                'relationship_stage': 'stranger'  # 'stranger', 'friend', 'close_friend', 'romantic_interest', 'lover'
+            },
+            'seraph': {
+                'approval': 0,
+                'romance_active': False,
+                'romance_locked': False,
+                'scenes_unlocked': [],
+                'relationship_stage': 'stranger'
+            },
+            'mira': {
+                'approval': 0,
+                'romance_active': False,
+                'romance_locked': False,
+                'scenes_unlocked': [],
+                'relationship_stage': 'stranger'
+            },
+            'pyrus': {
+                'approval': 0,
+                'romance_active': False,
+                'romance_locked': False,
+                'scenes_unlocked': [],
+                'relationship_stage': 'stranger'
+            },
+            'morwen': {
+                'approval': 0,
+                'romance_active': False,
+                'romance_locked': False,
+                'scenes_unlocked': [],
+                'relationship_stage': 'stranger'
+            }
+        }
+
     def _init_starting_equipment(self):
         """Inicjalizuje startowy ekwipunek."""
         with open('data/items.json', 'r', encoding='utf-8') as f:
@@ -499,6 +558,240 @@ class Character:
 
     # ===== KONIEC SYSTEMU TALENTÓW =====
 
+    # ===== SYSTEM REPUTACJI =====
+
+    def change_reputation(self, faction, amount):
+        """
+        Zmienia reputację z frakcją.
+
+        Args:
+            faction: ID frakcji ('kosciol', 'orkden', 'zmierzchli', etc.)
+            amount: Zmiana reputacji (+/-)
+
+        Returns:
+            Tuple (nowa_reputacja, tier_name, tier_changed)
+        """
+        if faction not in self.reputation:
+            return None, None, False
+
+        old_tier = self.get_reputation_tier(faction)
+        self.reputation[faction] = max(-100, min(100, self.reputation[faction] + amount))
+        new_tier = self.get_reputation_tier(faction)
+
+        tier_changed = (old_tier != new_tier)
+
+        return self.reputation[faction], new_tier, tier_changed
+
+    def get_reputation_tier(self, faction):
+        """
+        Zwraca tier reputacji dla frakcji.
+
+        Returns:
+            String: 'apostate', 'heretic', 'enemy', 'suspected', 'distrusted',
+                    'tolerated', 'accepted', 'respected', 'honored', 'champion'
+        """
+        rep = self.reputation.get(faction, 0)
+
+        if rep <= -80:
+            return 'apostate'
+        elif rep <= -60:
+            return 'heretic'
+        elif rep <= -40:
+            return 'enemy'
+        elif rep <= -20:
+            return 'suspected'
+        elif rep < 0:
+            return 'distrusted'
+        elif rep < 20:
+            return 'tolerated'
+        elif rep < 40:
+            return 'accepted'
+        elif rep < 60:
+            return 'respected'
+        elif rep < 80:
+            return 'honored'
+        else:
+            return 'champion'
+
+    def get_reputation_tier_pl(self, faction):
+        """Zwraca polską nazwę tier reputacji."""
+        tier = self.get_reputation_tier(faction)
+        tiers_pl = {
+            'apostate': 'Apostata',
+            'heretic': 'Heretyk',
+            'enemy': 'Wróg',
+            'suspected': 'Podejrzany',
+            'distrusted': 'Nieufany',
+            'tolerated': 'Tolerowany',
+            'accepted': 'Zaakceptowany',
+            'respected': 'Szanowany',
+            'honored': 'Honorowany',
+            'champion': 'Mistrz'
+        }
+        return tiers_pl.get(tier, 'Nieznany')
+
+    # ===== SYSTEM WYBORÓW I FLAGS =====
+
+    def make_choice(self, choice_id, selected_option):
+        """
+        Rejestruje główny wybór gracza.
+
+        Args:
+            choice_id: ID wyboru (np. 'starfall_fate')
+            selected_option: Wybrana opcja (np. 'evacuate', 'defend')
+        """
+        self.major_choices[choice_id] = selected_option
+
+    def get_choice(self, choice_id):
+        """Zwraca wybraną opcję dla danego wyboru."""
+        return self.major_choices.get(choice_id)
+
+    def add_flag(self, flag):
+        """Dodaje story flag."""
+        self.story_flags.add(flag)
+
+    def has_flag(self, flag):
+        """Sprawdza czy ma dany flag."""
+        return flag in self.story_flags
+
+    def remove_flag(self, flag):
+        """Usuwa story flag."""
+        self.story_flags.discard(flag)
+
+    # ===== SYSTEM COMPANIONÓW =====
+
+    def add_companion(self, companion_id):
+        """
+        Dodaje companiona do drużyny.
+
+        Args:
+            companion_id: ID companiona (np. 'theron', 'mira')
+
+        Returns:
+            bool: True jeśli dodano
+        """
+        if companion_id not in self.companions:
+            self.companions.append(companion_id)
+            # Automatycznie dodaj do aktywnej party jeśli jest miejsce
+            if len(self.active_party) < 3:
+                self.active_party.append(companion_id)
+            return True
+        return False
+
+    def remove_companion(self, companion_id):
+        """Usuwa companiona (np. gdy umiera lub odchodzi)."""
+        if companion_id in self.companions:
+            self.companions.remove(companion_id)
+        if companion_id in self.active_party:
+            self.active_party.remove(companion_id)
+
+    def has_companion(self, companion_id):
+        """Sprawdza czy companion jest w drużynie."""
+        return companion_id in self.companions
+
+    # ===== SYSTEM ROMANSÓW =====
+
+    def change_approval(self, companion_id, amount):
+        """
+        Zmienia approval z companionem.
+
+        Args:
+            companion_id: ID companiona
+            amount: Zmiana approval (+/-)
+
+        Returns:
+            Tuple (new_approval, old_stage, new_stage, stage_changed)
+        """
+        if companion_id not in self.romances:
+            return None, None, None, False
+
+        romance = self.romances[companion_id]
+        old_stage = romance['relationship_stage']
+
+        romance['approval'] = max(0, min(100, romance['approval'] + amount))
+
+        # Automatycznie update relationship stage
+        new_approval = romance['approval']
+        if new_approval >= 81:
+            romance['relationship_stage'] = 'lover' if romance['romance_active'] else 'romantic_interest'
+        elif new_approval >= 61:
+            romance['relationship_stage'] = 'romantic_interest' if romance['romance_active'] else 'close_friend'
+        elif new_approval >= 41:
+            romance['relationship_stage'] = 'close_friend'
+        elif new_approval >= 21:
+            romance['relationship_stage'] = 'friend'
+        else:
+            romance['relationship_stage'] = 'stranger'
+
+        new_stage = romance['relationship_stage']
+        stage_changed = (old_stage != new_stage)
+
+        return new_approval, old_stage, new_stage, stage_changed
+
+    def start_romance(self, companion_id):
+        """
+        Rozpoczyna romance z companionem (po pierwszym kiss).
+
+        Args:
+            companion_id: ID companiona
+
+        Returns:
+            bool: True jeśli można rozpocząć
+        """
+        if companion_id not in self.romances:
+            return False
+
+        romance = self.romances[companion_id]
+
+        # Sprawdź czy jest zablokowany
+        if romance['romance_locked']:
+            return False
+
+        # Sprawdź approval (minimum 61 do romance)
+        if romance['approval'] < 61:
+            return False
+
+        # Zablokuj inne romanse (monogamy)
+        for other_id, other_romance in self.romances.items():
+            if other_id != companion_id:
+                other_romance['romance_locked'] = True
+
+        romance['romance_active'] = True
+        romance['relationship_stage'] = 'romantic_interest'
+
+        return True
+
+    def unlock_romance_scene(self, companion_id, scene_id):
+        """Odblokowuje scenę romantyczną."""
+        if companion_id in self.romances:
+            if scene_id not in self.romances[companion_id]['scenes_unlocked']:
+                self.romances[companion_id]['scenes_unlocked'].append(scene_id)
+
+    def has_romance_scene(self, companion_id, scene_id):
+        """Sprawdza czy scena została odblokowana."""
+        if companion_id in self.romances:
+            return scene_id in self.romances[companion_id]['scenes_unlocked']
+        return False
+
+    def get_romance_status(self, companion_id):
+        """Zwraca pełny status romansu z companionem."""
+        return self.romances.get(companion_id)
+
+    def is_romancing(self, companion_id):
+        """Sprawdza czy jest w romansie z companionem."""
+        if companion_id in self.romances:
+            return self.romances[companion_id]['romance_active']
+        return False
+
+    def get_active_romance(self):
+        """Zwraca ID companiona z którym jest aktywny romans (lub None)."""
+        for companion_id, romance in self.romances.items():
+            if romance['romance_active']:
+                return companion_id
+        return None
+
+    # ===== KONIEC SYSTEMU ROMANSÓW =====
+
     def to_dict(self):
         """Konwertuje postać do słownika (do zapisu)."""
         return {
@@ -524,7 +817,14 @@ class Character:
             'talent_points': self.talent_points,
             'learned_talents': self.learned_talents,
             'talent_cooldowns': self.talent_cooldowns,
-            'talent_buffs': self.talent_buffs
+            'talent_buffs': self.talent_buffs,
+            # Nowe systemy
+            'reputation': self.reputation,
+            'major_choices': self.major_choices,
+            'story_flags': list(self.story_flags),  # Set -> list dla JSON
+            'companions': self.companions,
+            'active_party': self.active_party,
+            'romances': self.romances
         }
 
     @staticmethod
@@ -551,4 +851,20 @@ class Character:
         char.learned_talents = data.get('learned_talents', [])
         char.talent_cooldowns = data.get('talent_cooldowns', {})
         char.talent_buffs = data.get('talent_buffs', {})
+        # Nowe systemy (z defaults dla starych save'ów)
+        char.reputation = data.get('reputation', {
+            'kosciol': 0, 'orkden': 0, 'zmierzchli': 0,
+            'starfall': 50, 'nobility': 0, 'merchants': 0
+        })
+        char.major_choices = data.get('major_choices', {})
+        char.story_flags = set(data.get('story_flags', []))  # List -> set
+        char.companions = data.get('companions', [])
+        char.active_party = data.get('active_party', [])
+        char.romances = data.get('romances', {
+            'theron': {'approval': 0, 'romance_active': False, 'romance_locked': False, 'scenes_unlocked': [], 'relationship_stage': 'stranger'},
+            'seraph': {'approval': 0, 'romance_active': False, 'romance_locked': False, 'scenes_unlocked': [], 'relationship_stage': 'stranger'},
+            'mira': {'approval': 0, 'romance_active': False, 'romance_locked': False, 'scenes_unlocked': [], 'relationship_stage': 'stranger'},
+            'pyrus': {'approval': 0, 'romance_active': False, 'romance_locked': False, 'scenes_unlocked': [], 'relationship_stage': 'stranger'},
+            'morwen': {'approval': 0, 'romance_active': False, 'romance_locked': False, 'scenes_unlocked': [], 'relationship_stage': 'stranger'}
+        })
         return char
